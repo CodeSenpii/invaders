@@ -84,8 +84,13 @@ class Enemy{
     this.game.projectilesPool.forEach(projectile => {
       if (!projectile.free && this.game.checkCollision(this, projectile)){
         this.markedForDeletion = true;
+        projectile.reset();
+        this.game.score++;
       }
     });
+    if(this.y + this.height > this.game.height){
+      this.game.gameOver = true;
+    }
   }
 }// end Enemy class
 
@@ -100,6 +105,7 @@ class Wave{
     this.speedX = 3;
     this.speedY = 0;
     this.enemies = [];
+    this.nextWaveTrigger = false;
     this.create();
 
   }
@@ -138,6 +144,8 @@ class Game{
     this.height = this.canvas.height;
     this.player = new Player(this);
     this.keys = [];
+    this.score = 0;
+    this.gameOver = false;
     //-------------Projectiles------------
     this.projectilesPool = [];
     this.numberOfPrjectiles = 10;
@@ -146,11 +154,12 @@ class Game{
     //-------------------------------------
 
     //-------------Enemy Wave Grid--------------
-    this.columns = 3;
-    this.rows = 3;
+    this.columns = 2;
+    this.rows = 2;
     this.enemySize = 60;
     this.waves = [];
     this.waves.push(new Wave(this));
+    this.waveCount = 1;
     //-------------------------------------
 
     // event listeber - Key controls
@@ -174,6 +183,7 @@ class Game{
   }// End game Constructor
 
   render(context){
+    this.drawStatusText(context);
     this.player.draw(context);
     this.player.update();
     this.projectilesPool.forEach(projectile => {
@@ -182,6 +192,11 @@ class Game{
     });
     this.waves.forEach(wave => {
       wave.render(context);
+      if(wave.enemies.length < 1 && !wave.nextWaveTrigger && !this.gameOver){
+        this.newWave();
+        this.waveCount++;
+        wave.nextWaveTrigger = true;
+      }
     });
   }
 
@@ -205,6 +220,28 @@ class Game{
        a.y < b.y + b.height &&
        a.y + a.height > b.y );
      }
+     //--------------------------------------------------
+     // ----------------Game Text------------------------
+     drawStatusText(context){
+       context.fillText('Score: ' + this.score, 20, 40);
+
+       if (this.gameOver){
+         context.save();
+         context.shadowOffsetX = 2;
+         context.shadowOffsetY = 2;
+         context.shadowColor = 'white';
+         context.fillStyle = 'blue';
+         context.textAlign = 'center';
+         context.font = '100px Impact';
+         context.fillText('GAME OVER!', this.width * 0.5, this.height * 0.5);
+         context.restore();
+       }
+     }
+     newWave(){
+       this.columns++;
+       this.rows++;
+       this.waves.push(new Wave(this));
+     }
 
 }//end Game class
 
@@ -217,6 +254,7 @@ window.addEventListener('load', function(){
   ctx.fillStyle = 'lightgreen';
   ctx.strokeStyle = 'white';
   ctx.lineWidth = 5;
+  ctx.font = '30px Impact';
 
   const game =  new Game(canvas);
 
