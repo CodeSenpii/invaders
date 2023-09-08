@@ -1,3 +1,18 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  background-image: url('assets/bg1.jpg');
+  background-repeat: no-repeat;
+  background-size: auto;
+  overflow: hidden;
+  /* background-color: black; */
+
+}
+
 #canvas1{
 
   border: 5px solid black;

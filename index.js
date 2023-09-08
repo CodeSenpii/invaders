@@ -225,6 +225,19 @@ class Game{
      drawStatusText(context){
        context.fillText('Score: ' + this.score, 20, 40);
 
+
+//--------------UNER CONSTRUCTION-------------------------
+        context.save();
+         context.fillStyle = 'lightyellow';
+         context.font = '50px Impact';
+         context.globalAlpha = 0.5;
+         context.textAlign = 'center';
+         context.fillText('UNDER CONSTRUCTION', this.width * 0.5, this.height * 0.5);
+         context.restore();
+  //----------------------------------------------------------
+
+
+
        if (this.gameOver){
          context.save();
          context.shadowOffsetX = 2;
@@ -240,16 +253,21 @@ class Game{
      newWave(){
        if (Math.random() < 0.5 && this.columns * this.enemySize < this.width * 0.8){
          this.columns++;
-       }else{
+       }else if(this.rows * this.enemySize < this.height * 0.6){
          this.rows++;
        }
-
-
-
        this.waves.push(new Wave(this));
      }
 
+
+
+
+
 }//end Game class
+
+
+
+
 
 window.addEventListener('load', function(){
   const canvas = document.getElementById('canvas1');
@@ -265,6 +283,10 @@ window.addEventListener('load', function(){
   const game =  new Game(canvas);
 
 
+
+
+
+
   //------------------animation loop --------------
   function animate(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -272,6 +294,7 @@ window.addEventListener('load', function(){
     window.requestAnimationFrame(animate);
 
   }
+
 
   animate();
 });
