@@ -8,6 +8,7 @@ class Player{
     this.x = this.game.width * 0.5 - (this.width * 0.5);
     this.y = this.game.height - this.height;
     this.speed = 6;
+    this.lives = 3;
   }
   draw(context){
     context.fillRect(this.x, this.y, this.width, this.height);
@@ -88,8 +89,18 @@ class Enemy{
         this.game.score++;
       }
     });
+    // check collision enemies - Player
+    if (this.game.checkCollision(this, this.game.player)){
+      this.markedForDeletion = true;
+      if(!this.game.gameOver && this.game.score > 0) this.game.score--;
+      this.game.player.lives--;
+      if(this.game.player.lives < 1) this.game.gameOver = true;
+
+    }
+    // lose condition
     if(this.y + this.height > this.game.height){
       this.game.gameOver = true;
+      this.markedForDeletion = true;
     }
   }
 }// end Enemy class
@@ -235,7 +246,9 @@ class Game{
          context.fillText('UNDER CONSTRUCTION', this.width * 0.5, this.height * 0.5);
          context.restore();
   //----------------------------------------------------------
-
+        for (let i = 0; i < this.player.lives; i++){
+          context.fillRect(20 + 10 * i, 60, 5, 20);
+        }
 
 
        if (this.gameOver){
@@ -249,7 +262,7 @@ class Game{
          context.fillText('GAME OVER!', this.width * 0.5, this.height * 0.5);
          context.restore();
        }
-     }
+     }//------------------drawStatusText function ---------------------
      newWave(){
        if (Math.random() < 0.5 && this.columns * this.enemySize < this.width * 0.8){
          this.columns++;
