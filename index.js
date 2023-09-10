@@ -29,6 +29,12 @@ class Player{
     const projectile = this.game.getProjectile();
     if (projectile) projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
   }
+
+  restart(){
+    this.x = this.game.width * 0.5 - (this.width * 0.5);
+    this.y = this.game.height - this.height;
+    this.lives = 3;
+  }
 }// End Player Class
 
 class Projectile{// using object polling
@@ -178,8 +184,8 @@ class Game{
       if(this.keys.indexOf(e.key) === -1){
         this.keys.push(e.key);
         // console.log(e.key);
-
       }
+      if(e.key === 'r' && this.gameOver) this.restart();
 
       if(e.key === ' ' || e.key === 'ArrowUp') this.player.shoot();
     });
@@ -256,11 +262,13 @@ class Game{
          context.save();
          context.shadowOffsetX = 2;
          context.shadowOffsetY = 2;
-         context.shadowColor = 'white';
+         context.shadowColor = 'black';
          context.fillStyle = 'blue';
          context.textAlign = 'center';
          context.font = '100px Impact';
          context.fillText('GAME OVER!', this.width * 0.5, this.height * 0.5);
+         context.font = '20px Impact';
+         context.fillText('Press R to retart!', this.width * 0.5, this.height * 0.5 + 100);
          context.restore();
        }
      }//------------------drawStatusText function ---------------------
@@ -271,6 +279,18 @@ class Game{
          this.rows++;
        }
        this.waves.push(new Wave(this));
+     }
+
+     restart(){
+       this.player.restart();
+       this.columns = 2;
+       this.rows = 2;
+
+       this.waves = [];
+       this.waves.push(new Wave(this));
+       this.waveCount = 1;
+       this.score = 0;
+       this.gameOver = false;
      }
 
 
