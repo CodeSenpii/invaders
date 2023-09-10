@@ -163,7 +163,9 @@ class Game{
     this.keys = [];
     this.score = 0;
     this.gameOver = false;
+
     //-------------Projectiles------------
+    this.fired = false;
     this.projectilesPool = [];
     this.numberOfPrjectiles = 10;
     this.createProjectiles();
@@ -181,16 +183,20 @@ class Game{
 
     // event listeber - Key controls
     window.addEventListener('keydown', e => {// use => to maintain scope
+
+      if(e.key === ' ' && !this.fired || e.key === 'ArrowUp' && !this.fired) this.player.shoot();
+      this.fired = true;
       if(this.keys.indexOf(e.key) === -1){
         this.keys.push(e.key);
         // console.log(e.key);
       }
       if(e.key === 'r' && this.gameOver) this.restart();
 
-      if(e.key === ' ' || e.key === 'ArrowUp') this.player.shoot();
+
     });
       window.addEventListener('keyup', e => {// use => to maintain scope
         const index = this.keys.indexOf(e.key);
+        this.fired = false;
 
         if(index > -1){
           this.keys.splice(index, 1);
