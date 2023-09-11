@@ -82,7 +82,7 @@ class Enemy{
     this.markedForDeletion = false;
   }
   draw(context){
-    context.strokeRect(this.x, this.y, this.width, this.height);
+    // context.strokeRect(this.x, this.y, this.width, this.height);
     context.drawImage(this.image, this.frameX*this.width, this.frameY*this.height, this.width, this.height, this.x, this.y, this.width, this.height);
   }
   update(x,y){
@@ -90,12 +90,22 @@ class Enemy{
     this.y = y + this.positionY;
     // check collision here
     this.game.projectilesPool.forEach(projectile => {
-      if (!projectile.free && this.game.checkCollision(this, projectile)){
-        this.markedForDeletion = true;
+      if (!projectile.free && this.game.checkCollision(this, projectile)
+    && this.lives > 0){
+        // this.markedForDeletion = true;
+        this.hit(1);
         projectile.reset();
-        if(!this.game.gameOver) this.game.score++;
+        // if(!this.game.gameOver) this.game.score++;
       }
     });
+
+    if (this.lives < 1){
+      if (this.game.spriteUpdate) this.frameX++;
+      if (this.frameX > this.maxFrame){
+        this.markedForDeletion = true;
+        if(!this.game.gameOver) this.game.score += this.maxLives;
+      }
+    }
     // check collision enemies - Player
     if (this.game.checkCollision(this, this.game.player)){
       this.markedForDeletion = true;
@@ -111,7 +121,7 @@ class Enemy{
     }
   }
   hit(damage){
-
+    this.lives -= damage;
   }
 }// end Enemy class
 
@@ -121,9 +131,9 @@ class Wave{
     this.width = this.game.columns * this.game.enemySize;
     this.height = this.game.rows * this.game.enemySize;
 
-    this.x = 0;
-    this.y = -this.height;
-    this.speedX = 3;
+    this.x = this.game.width * 0.5 - this.width * 0.5;  // wave starting position
+    this.y = -this.height; // starting position
+    this.speedX = Math.random() < 0.5 ? -1 : 1; // sets initial the direction of wave
     this.speedY = 0;
     this.enemies = [];
     this.nextWaveTrigger = false;
@@ -163,8 +173,11 @@ class Beetlemorph extends Enemy{
   constructor( game, positionX, positionY){
     super(game, positionX, positionY); //pass these parameter to superclass Enemy
     this.image = document.getElementById('beetlemorph');
-    this.frameX = 0;
-    this.frameY = Math.floor(Math.random() * 4);
+    this.frameX = 0; // this indicates the frame X on the sprite
+    this.frameY = Math.floor(Math.random() * 4); // frame Y position on sprite sheet
+    this.maxFrame = 2;
+    this.lives = 1;// defines how easy it is to beat this enemy
+    this.maxLives = this.lives;
   }
 
 }
@@ -185,6 +198,11 @@ class Game{
     this.createProjectiles();
 
     //-------------------------------------
+    //----------timeing frames------------
+    this.spriteUpdate = false;
+    this.spriteTimer = 0;
+    this.spriteInterval = 80;
+    //-----------------------------------
 
     //-------------Enemy Wave Grid--------------
     this.columns = 2;
@@ -219,7 +237,15 @@ class Game{
     });
   }// End game Constructor
 
-  render(context){
+  render(context, deltaTime){
+    // sprite timeingif
+    if (this.spriteTimer > this.spriteInterval){
+      this.spriteUpdate = true;
+      this.spriteTimer = 0;
+    }else{
+      this.spriteUpdate = false;
+      this.spriteTimer += deltaTime;
+    }
     this.drawStatusText(context);
     this.player.draw(context);
     this.player.update();
@@ -283,12 +309,12 @@ class Game{
          context.shadowOffsetX = 2;
          context.shadowOffsetY = 2;
          context.shadowColor = 'black';
-         context.fillStyle = 'blue';
+         context.fillStyle = 'tomato';
          context.textAlign = 'center';
          context.font = '100px Impact';
          context.fillText('GAME OVER!', this.width * 0.5, this.height * 0.5);
          context.font = '20px Impact';
-         context.fillText('Press R to retart!', this.width * 0.5, this.height * 0.5 + 100);
+         context.fillText('Press R to restart!', this.width * 0.5, this.height * 0.5 + 60);
          context.restore();
        }
      }//------------------drawStatusText function ---------------------
@@ -338,17 +364,17 @@ window.addEventListener('load', function(){
 
 
 
-
-
-
+let lastTime = 0;
   //------------------animation loop --------------
-  function animate(){
+  function animate(timeStamp){
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.render(ctx);
+    game.render(ctx, deltaTime);
     window.requestAnimationFrame(animate);
 
   }
 
 
-  animate();
+  animate(0);
 });
