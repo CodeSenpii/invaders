@@ -83,6 +83,7 @@ class Enemy{
   }
   draw(context){
     context.strokeRect(this.x, this.y, this.width, this.height);
+    context.drawImage(this.image, this.frameX*this.width, this.frameY*this.height, this.width, this.height, this.x, this.y, this.width, this.height);
   }
   update(x,y){
     this.x = x + this.positionX;
@@ -108,6 +109,9 @@ class Enemy{
       this.game.gameOver = true;
       this.markedForDeletion = true;
     }
+  }
+  hit(damage){
+
   }
 }// end Enemy class
 
@@ -143,17 +147,27 @@ class Wave{
     });
     this.enemies = this.enemies.filter(object => !object.markedForDeletion);
   }// end wave render method
-  create(){
+  create(){// create the 2d wave
 
     for (let y = 0; y < this.game.rows; y++){
       for (let x = 0; x < this.game.columns; x++){
         let enemyX = x * this.game.enemySize;
         let enemyY = y * this.game.enemySize;
-        this.enemies.push(new Enemy(this.game, enemyX, enemyY));
+        this.enemies.push(new Beetlemorph(this.game, enemyX, enemyY));
       }
     }
   }
 }// end wave class
+
+class Beetlemorph extends Enemy{
+  constructor( game, positionX, positionY){
+    super(game, positionX, positionY); //pass these parameter to superclass Enemy
+    this.image = document.getElementById('beetlemorph');
+    this.frameX = 0;
+    this.frameY = Math.floor(Math.random() * 4);
+  }
+
+}
 class Game{
   constructor(canvas){
     this.canvas = canvas;
@@ -175,7 +189,7 @@ class Game{
     //-------------Enemy Wave Grid--------------
     this.columns = 2;
     this.rows = 2;
-    this.enemySize = 60;
+    this.enemySize = 80;
     this.waves = [];
     this.waves.push(new Wave(this));
     this.waveCount = 1;
