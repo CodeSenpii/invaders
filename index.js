@@ -133,17 +133,19 @@ class Enemy{
       }
     }
     // check collision enemies - Player
-    if (this.game.checkCollision(this, this.game.player)){
-      this.markedForDeletion = true;
-      if(!this.game.gameOver && this.game.score > 0) this.game.score--;
+    if (this.game.checkCollision(this, this.game.player) && this.lives > 0){
+      this.lives = 0;
+
+      // this.markedForDeletion = true;
+      // if(!this.game.gameOver && this.game.score > 0) this.game.score--;
       this.game.player.lives--;
-      if(this.game.player.lives < 1) this.game.gameOver = true;
+      // if(this.game.player.lives < 1) this.game.gameOver = true;
 
     }
     // lose condition
-    if(this.y + this.height > this.game.height){
+    if(this.y + this.height > this.game.height || this.game.player.lives < 1){
       this.game.gameOver = true;
-      this.markedForDeletion = true;
+      // this.markedForDeletion = true;
     }
   }
   hit(damage){
@@ -220,7 +222,7 @@ class Game{
     //-------------Projectiles------------
     this.fired = false;
     this.projectilesPool = [];
-    this.numberOfPrjectiles = 10;
+    this.numberOfPrjectiles = 15;
     this.createProjectiles();
 
     //-------------------------------------
