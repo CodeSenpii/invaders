@@ -25,6 +25,6 @@ body{
   background-size: cover;
   /* overflow: hidden; */
 }
-#beetlemorph, #player, #player_jets{
+#beetlemorph, #player, #player_jets, #rhinomorph, #boss{
   display: none;
 }
