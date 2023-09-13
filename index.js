@@ -171,7 +171,7 @@ class Boss{
     this.maxFrame = 11;
   }
   draw(context){
-    context.drawImage(this.bossImage, this.frameX, this.frameY*this.height, this.width,
+    context.drawImage(this.bossImage, this.frameX*this.width, this.frameY*this.height, this.width,
     this.height, this.x, this.y, this.width, this.height);
     context.save();
     context.textAlign = 'center';
@@ -186,6 +186,7 @@ class Boss{
 
   update(){
     this.speedY = 0;
+    if (this.game.spriteUpdate && this.lives > 0) this.frameX = 0;
     if (this.y < 0) this.y += 3;
     if (this.x < 0 || this.x > this.game.width - this.width){
       this.speedX *= -1;
@@ -197,17 +198,28 @@ class Boss{
     //--------------------collision detect
     this.game.projectilesPool.forEach(projectile =>{
       if (this.game.checkCollision(this, projectile) && !projectile.free && this.lives > 0){
-        this.lives--;
-        console.log(this.lives);
+        // this.lives--;
+        this.hit(1);
         projectile.reset();
       }
     });
 
+    // boss destroyed
+    if (this.lives < 1 && this.game.spriteUpdate){
+      this.frameX++;
+      if (this.framex > this.maxFrame){
+        this.markedForDeletion = true;
+        this.game.score += this.maxLives;
+      }
+    }
+
   }
 
   hit(damage){
-    this.lives -== damage;
-
+    this.lives -= damage;
+    if(this.lives > 0) {
+    this.frameX = 2;
+    }
   }
 }// end class boss wave
 
@@ -229,7 +241,7 @@ class Wave {
   }
   render(context) {
     // context.strokeRect(this.x, this.y, this.width, this.height);
-    if (this.y < 0) this.y += 5;
+    if (this.y < 70) this.y += 5;
     this.speedY = 0;
     if (this.x < 0 || this.x > this.game.width - this.width) {
       this.speedX *= -1;
@@ -373,6 +385,8 @@ class Game {
       boss.draw(context);
       boss.update();
     });
+
+    this.bossArray = this.bossArray.filter(object => !object.markedForDeletion);// delete boss
     this.waves.forEach(wave => {
       wave.render(context);
       if (wave.enemies.length < 1 && !wave.nextWaveTrigger && !this.gameOver) {
@@ -460,7 +474,7 @@ class Game {
     this.rows = 2;
 
     this.waves = [];
-    // this.waves.push(new Wave(this));
+    this.waves.push(new Wave(this));
     this.bossArray.push(new Boss(this));
     this.waveCount = 1;
     this.score = 0;
