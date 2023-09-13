@@ -153,6 +153,41 @@ class Enemy {
   }
 } // end Enemy class
 
+class Boss{
+  constructor(game){
+    this.game = game;
+    this.width = 200;
+    this.height= 200;
+    this.x =  this.game.width * 0.5 - this.width * 0.5;
+    this.y = -this.height;
+    this.speedX = Math.random() < 0.5 ? -1 : 1;
+    this.speedY = 0;
+    this.lives = 10;
+    this.maxLives = this.lives;
+    this.markedFor = false;
+    this.bossImage = document.getElementById('boss');
+    this.frameX = 0;
+    this.frameY = Math.floor(Math.random() * 4);
+    this.maxFrame = 11;
+  }
+  draw(context){
+    context.drawImage(this.bossImage, this.frameX, this.frameY*this.height, this.width,
+    this.height, this.x, this.y, this.width, this.height);
+  }
+
+  update(){
+    this.speedY = 0;
+    if (this.y < 0) this.y += 3;
+    if (this.x < 0 || this.x > this.game.width - this.width){
+      this.speedX *= -1;
+      this.speedY = this.height * 0.3;
+    }
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+  }
+}// end class boss wave
+
 class Wave {
   constructor(game) {
     this.game = game;
@@ -165,6 +200,7 @@ class Wave {
     this.speedY = 0;
     this.enemies = [];
     this.nextWaveTrigger = false;
+    this.markedForDeletion = false;
     this.create();
 
   }
@@ -184,6 +220,7 @@ class Wave {
       enemy.draw(context);
     });
     this.enemies = this.enemies.filter(object => !object.markedForDeletion);
+    if (this.enemies.length <= 0) this.markedForDeletion = true;
   } // end wave render method
   create() { // create the 2d wave
 
@@ -259,9 +296,14 @@ class Game {
     this.rows = 2;
     this.enemySize = 80;
     this.waves = [];
-    this.waves.push(new Wave(this));
+    // this.waves.push(new Wave(this));
     this.waveCount = 1;
     //-------------------------------------
+
+    //----------Boss---------------------
+    this.bossArray = [];
+    this.restart();// when boss appaers you restart
+    //---------------------------------
 
     // event listeber - Key controls
     window.addEventListener('keydown', e => { // use => to maintain scope
@@ -302,6 +344,11 @@ class Game {
     this.projectilesPool.forEach(projectile => {
       projectile.update();
       projectile.draw(context);
+    });
+
+    this.bossArray.forEach(boss => {
+      boss.draw(context);
+      boss.update();
     });
     this.waves.forEach(wave => {
       wave.render(context);
@@ -381,6 +428,7 @@ class Game {
       this.rows++;
     }
     this.waves.push(new Wave(this));
+    this.waves = this.waves.filter(object => !object.markedForDeletion);
   }
 
   restart() {
@@ -389,7 +437,8 @@ class Game {
     this.rows = 2;
 
     this.waves = [];
-    this.waves.push(new Wave(this));
+    // this.waves.push(new Wave(this));
+    this.bossArray.push(new Boss(this));
     this.waveCount = 1;
     this.score = 0;
     this.gameOver = false;
