@@ -173,6 +173,15 @@ class Boss{
   draw(context){
     context.drawImage(this.bossImage, this.frameX, this.frameY*this.height, this.width,
     this.height, this.x, this.y, this.width, this.height);
+    context.save();
+    context.textAlign = 'center';
+    context.fillStyle = 'white';
+    context.shadowOffsetX = 2;
+    context.shadowOffsetY = 2;
+    context.shadowColor = 'black';
+    if(this.lives != '0')
+    context.fillText(this.lives, this.x + this.width * 0.5, this.y);
+    context.restore();
   }
 
   update(){
@@ -184,6 +193,20 @@ class Boss{
     }
     this.x += this.speedX;
     this.y += this.speedY;
+
+    //--------------------collision detect
+    this.game.projectilesPool.forEach(projectile =>{
+      if (this.game.checkCollision(this, projectile) && !projectile.free && this.lives > 0){
+        this.lives--;
+        console.log(this.lives);
+        projectile.reset();
+      }
+    });
+
+  }
+
+  hit(damage){
+    this.lives -== damage;
 
   }
 }// end class boss wave
