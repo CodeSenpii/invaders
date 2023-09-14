@@ -1,5 +1,16 @@
 //jshint esversion:8
+class Laser {
+  constructor(){
 
+  }
+}
+
+class SmallLaser extends Laser {
+
+}
+class BigLaser extends Laser {
+
+}
 class Player {
   constructor(game) {
     this.game = game;
@@ -195,9 +206,10 @@ class Boss {
     this.x = this.x + this.speedX;
     this.y += this.speedY;
 
-    //--------------------collision detect
+    //--------------------collision detect projectiles-----------
     this.game.projectilesPool.forEach(projectile => {
-      if (this.game.checkCollision(this, projectile) && !projectile.free && this.lives > 0) {
+      if (this.game.checkCollision(this, projectile) && !projectile.free &&
+      this.lives > 0 && this.y >= 0) {
         // this.lives--;
         this.hit(1);
         projectile.reset();
@@ -249,7 +261,7 @@ class Wave {
   }
   render(context) {
     // context.strokeRect(this.x, this.y, this.width, this.height);
-    if (this.y < 70) this.y += 5;
+    if (this.y < 0) this.y += 5;
     this.speedY = 0;
     if (this.x < 0 || this.x > this.game.width - this.width) {
       this.speedX *= -1;

@@ -28,3 +28,10 @@ body{
 #beetlemorph, #player, #player_jets, #rhinomorph, #boss{
   display: none;
 }
+
+@media (max-width: 600px){
+  #canvas1 {
+    width: 80%;
+    height: 80%;
+  }
+}
