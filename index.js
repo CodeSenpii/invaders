@@ -1,12 +1,33 @@
 //jshint esversion:8
 class Laser {
-  constructor(){
+  constructor(game){
+    this.game = game;
+    this.x =0;
+    this.y = 0;
 
+    this.height = this.game.height - 50;
+  }
+  render(context){
+    this.x = this.game.player.x + this.game.player.width * 0.5 - this.width * 0.5;// horizotal coord of player
+
+    context.save();
+    context.fillStyle = 'red';
+    context.fillRect(this.x, this.y, this.width, this.height);
+    context.fillStyle = 'yellow';
+    context.fillRect(this.x + this.width * 0.2, this.y, this.width * 0.6, this.height);
+    context.restore();
   }
 }
 
 class SmallLaser extends Laser {
+  constructor(game){
+    super(game);
+    this.width = 5;
 
+  }
+  render(context){
+    super.render(context);// call the render method of the superclass
+  }
 }
 class BigLaser extends Laser {
 
@@ -25,12 +46,16 @@ class Player {
     this.frameX = 0;
     this.maxLives = 10;
     this.jetsFrame = 1;
+    this.SmallLaser = new SmallLaser(this.game);
   }
   draw(context) {
     // sprite frames
     if (this.game.keys.indexOf(' ') > -1) {
       this.frameX = 1;
-    } else {
+    } else if(this.game.keys.indexOf('1') > -1){
+      this.frameX = 2;
+      this.SmallLaser.render(context);
+    }else{
       this.frameX = 0;
     }
     context.drawImage(this.jets_image, this.jetsFrame * this.width, 0, this.width, this.height,
