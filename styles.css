@@ -35,3 +35,15 @@ body{
     height: 80%;
   }
 }
+#shoot{
+  position: absolute;
+  background: white;
+  border: 2px solid red;
+
+  color: red;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  bottom: 2%;
+  left: 10%;
+}
