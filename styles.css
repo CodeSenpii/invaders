@@ -46,4 +46,35 @@ body{
   border-radius: 50%;
   bottom: 2%;
   left: 10%;
+  touch-action: none;
+}
+
+@media (min-width: 600px){
+  #shoot{
+    display: none;
+  }
+}
+
+#left , #right{
+  position: absolute;
+  background: white;
+  border: 2px solid red;
+
+  color: red;
+  height: 50px;
+  width: 50px;
+
+
+  touch-action: none;
+}
+
+#left {
+  bottom: 2%;
+  right: 26%;
+  border-radius: 10% 20%;
+}
+#right {
+  bottom: 2%;
+  right: 16%;
+  border-radius: 20% 10%;
 }

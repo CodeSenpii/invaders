@@ -349,7 +349,7 @@ class Rhinomorph extends Enemy {
   }
 }
 class Game {
-  constructor(canvas) {
+  constructor(canvas, btn) {
     this.canvas = canvas;
     this.width = this.canvas.width;
     this.height = this.canvas.height;
@@ -385,7 +385,13 @@ class Game {
     this.bossLives = 10;
     this.restart(); // when boss appaers you restart
     //---------------------------------
-
+    // ----------------------button control-------------
+    btn.addEventListener('click', e => {
+      
+      this.player.shoot();
+      this.fired = true;
+    });
+    //--------------------------------------------------
     // event listeber - Key controls
     window.addEventListener('keydown', e => { // use => to maintain scope
 
@@ -543,6 +549,10 @@ class Game {
 
 window.addEventListener('load', function() {
   const canvas = document.getElementById('canvas1');
+  const btn = document.getElementById('shoot');
+
+
+
   const ctx = canvas.getContext('2d');
 
   canvas.width = 600;
@@ -552,7 +562,7 @@ window.addEventListener('load', function() {
   // ctx.lineWidth = 5;
   ctx.font = '30px Impact';
 
-  const game = new Game(canvas);
+  const game = new Game(canvas, btn);
 
 
 
