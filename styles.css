@@ -39,42 +39,52 @@ body{
   position: absolute;
   background: white;
   border: 2px solid red;
+  font-size: 1em;
 
   color: red;
+  font-weight: bolder;
   height: 50px;
   width: 50px;
   border-radius: 50%;
   bottom: 2%;
   left: 10%;
   touch-action: none;
+  user-select: none;
+
 }
 
-@media (min-width: 600px){
-  #shoot{
-    display: none;
-  }
-}
 
-#left , #right{
+
+#left_btn , #right_btn{
   position: absolute;
   background: white;
   border: 2px solid red;
 
   color: red;
-  height: 50px;
+  height: 40px;
   width: 50px;
+  font-size: 2em;
+  font-weight: bolder;
+  user-select: none;
 
 
   touch-action: none;
 }
 
-#left {
+#left_btn {
   bottom: 2%;
   right: 26%;
   border-radius: 10% 20%;
 }
-#right {
+#right_btn{
   bottom: 2%;
-  right: 16%;
+  right: 12%;
   border-radius: 20% 10%;
+}
+
+@media (min-width: 600px){
+  #shoot, #left_btn, #right_btn{
+    display: none;
+  }
+
 }

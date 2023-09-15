@@ -1,14 +1,14 @@
 //jshint esversion:8
 class Laser {
-  constructor(game){
+  constructor(game) {
     this.game = game;
-    this.x =0;
+    this.x = 0;
     this.y = 0;
 
     this.height = this.game.height - 50;
   }
-  render(context){
-    this.x = this.game.player.x + this.game.player.width * 0.5 - this.width * 0.5;// horizotal coord of player
+  render(context) {
+    this.x = this.game.player.x + this.game.player.width * 0.5 - this.width * 0.5; // horizotal coord of player
 
     context.save();
     context.fillStyle = 'red';
@@ -20,13 +20,13 @@ class Laser {
 }
 
 class SmallLaser extends Laser {
-  constructor(game){
+  constructor(game) {
     super(game);
     this.width = 5;
 
   }
-  render(context){
-    super.render(context);// call the render method of the superclass
+  render(context) {
+    super.render(context); // call the render method of the superclass
   }
 }
 class BigLaser extends Laser {
@@ -52,10 +52,10 @@ class Player {
     // sprite frames
     if (this.game.keys.indexOf(' ') > -1) {
       this.frameX = 1;
-    } else if(this.game.keys.indexOf('1') > -1){
+    } else if (this.game.keys.indexOf('1') > -1) {
       this.frameX = 2;
       this.SmallLaser.render(context);
-    }else{
+    } else {
       this.frameX = 0;
     }
     context.drawImage(this.jets_image, this.jetsFrame * this.width, 0, this.width, this.height,
@@ -69,18 +69,37 @@ class Player {
     //   if(this.x < this.game.width - this.width){
     //   this.x += this.speed;
     // }
+// this block handles left and right movements for keys and touch screen inputs
 
-    if (this.game.keys.indexOf('ArrowLeft') > -1) {
+    if (this.game.keys.indexOf('ArrowLeft') > -1 || this.game.btn_press.indexOf('left') > -1) {
       this.x -= this.speed;
       this.jetsFrame = 0;
-    } else if (this.game.keys.indexOf('ArrowRight') > -1) {
+      const index = this.game.keys.indexOf('left');
+      if (index > -1) {
+        this.game.keys.splice(index);
+      }
+
+
+    } else if (this.game.keys.indexOf('ArrowRight') > -1 || this.game.btn_press.indexOf('right') > -1) {
       this.x += this.speed;
       this.jetsFrame = 2;
+      const index = this.game.keys.indexOf('right');
+      if (index > -1) {
+        this.game.keys.splice(index);
+      }
     } else {
       this.jetsFrame = 1;
     }
+
+
     if (this.x < -this.width * 0.5) this.x = -this.width * 0.5;
     else if (this.x > this.game.width - (this.width * 0.5)) this.x = this.game.width - this.width * 0.5;
+
+    // const index = this.game.keys.indexOf('left');
+    // if(index > -1){
+    //   this.game.keys.splice(index);
+    // }
+
 
   }
 
@@ -234,7 +253,7 @@ class Boss {
     //--------------------collision detect projectiles-----------
     this.game.projectilesPool.forEach(projectile => {
       if (this.game.checkCollision(this, projectile) && !projectile.free &&
-      this.lives > 0 && this.y >= 0) {
+        this.lives > 0 && this.y >= 0) {
         // this.lives--;
         this.hit(1);
         projectile.reset();
@@ -354,9 +373,11 @@ class Game {
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this.player = new Player(this);
+    this.btn_press = [];
     this.keys = [];
     this.score = 0;
     this.gameOver = false;
+
 
     //-------------Projectiles------------
     this.fired = false;
@@ -385,11 +406,35 @@ class Game {
     this.bossLives = 10;
     this.restart(); // when boss appaers you restart
     //---------------------------------
-    // ----------------------button control-------------
+    // ----------------------button control fire, left, right-------------
     btn.addEventListener('click', e => {
-      
+
       this.player.shoot();
       this.fired = true;
+    });
+
+    left_btn.addEventListener('touchstart', e => {
+      // lets make sure that the btn_press array only has 0ne btn entry per btn push
+      if(this.btn_press.indexOf('left') === -1) this.btn_press.push('left');
+
+    });
+    left_btn.addEventListener('touchend', e => {
+      // lets make sure that the btn_press array only has 0ne btn entry per btn push
+      const index = this.btn_press.indexOf('left');
+      if (index > -1) this.btn_press.splice(index, 1);
+
+    });
+    right_btn.addEventListener('touchstart', e => {
+
+      if(this.btn_press.indexOf('right') === -1) this.btn_press.push('right');
+    });
+
+    right_btn.addEventListener('touchend', e => {
+      // lets make sure that the btn_press array only has 0ne btn entry per btn push
+
+      const index = this.btn_press.indexOf('right');
+      if (index > -1) this.btn_press.splice(index, 1);
+
     });
     //--------------------------------------------------
     // event listeber - Key controls
@@ -405,6 +450,8 @@ class Game {
 
 
     });
+
+
     window.addEventListener('keyup', e => { // use => to maintain scope
       const index = this.keys.indexOf(e.key);
       this.fired = false;
@@ -414,6 +461,7 @@ class Game {
       }
 
     });
+
   } // End game Constructor
 
   render(context, deltaTime) {
@@ -550,6 +598,10 @@ class Game {
 window.addEventListener('load', function() {
   const canvas = document.getElementById('canvas1');
   const btn = document.getElementById('shoot');
+  const left_btn = document.getElementById('left_btn');
+  const right_btn = document.getElementById('right_btn');
+
+
 
 
 
