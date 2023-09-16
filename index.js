@@ -9,7 +9,7 @@ class Laser {
   }
   render(context) {
     this.x = this.game.player.x + this.game.player.width * 0.5 - this.width * 0.5; // horizotal coord of player
-
+    this.game.player.energy -= this.damage;
     context.save();
     context.fillStyle = 'red';
     context.fillRect(this.x, this.y, this.width, this.height);
@@ -27,7 +27,7 @@ class Laser {
         });
       });
       this.game.bossArray.forEach(boss =>{
-        if (this.game.checkCollision(boss, this)){
+        if (this.game.checkCollision(boss, this) && boss.y >= 0){
           boss.hit(this.damage);
         }
       });
@@ -78,6 +78,9 @@ class Player {
     this.jetsFrame = 1;
     this.SmallLaser = new SmallLaser(this.game);
     this.bigLaser = new BigLaser(this.game);
+    this.energy = 50;
+    this.maxEnergy = 75;
+    this.coolDown = false;
 
   }
   draw(context) {
@@ -95,7 +98,7 @@ class Player {
     }
     else {
       this.frameX = 0;
-    }
+     }
     context.drawImage(this.jets_image, this.jetsFrame * this.width, 0, this.width, this.height,
       this.x, this.y, this.width, this.height);
     // context.fillRect(this.x, this.y, this.width, this.height);
@@ -103,7 +106,12 @@ class Player {
       this.x, this.y, this.width, this.height);
   }
   update() {
-
+    //energy
+    if (this.energy < this.maxEnergy){
+      this.energy += 0.05;
+    }
+    if (this.energy < 1) this.coolDown = true;
+    else if (this.energy > this.maxEnergy * 0.2) this.coolDown = false;
     //   if(this.x < this.game.width - this.width){
     //   this.x += this.speed;
     // }
@@ -605,10 +613,31 @@ class Game {
     }
 
     for (let i = 0; i < this.player.lives; i++) {
+
       context.fillRect(20 + 15 * i, 60, 10, 15);
     }
 
+    // energy
 
+    for (let i = 0; i < this.player.energy; i++){
+
+      context.save();
+      context.fillStyle = 'white';
+      context.font = '15px Impact';
+      context.fillText('Laser Status', 20,100);
+      // context.strokeStyle = 'white';
+      // context.strokeRect();
+      // context.fillStyle = 'tomato';
+
+      this.player.coolDown ? context.fillStyle = 'red' : context.fillStyle ='lightgreen';
+
+
+      context.globalAlpha = 0.7;
+      context.fillRect(20 + 2*i, 110, 2, 15);
+
+      context.restore();
+
+    }
     if (this.gameOver) {
       context.save();
       context.shadowOffsetX = 2;
