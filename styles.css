@@ -10,11 +10,12 @@ body{
   background-size: auto;
   overflow: hidden;
   /* background-color: black; */
+  user-select: none;
 
 }
 
 #canvas1{
-
+  user-select: none;
   border: 5px solid black;
   position: absolute;
   top:50%;
@@ -43,31 +44,42 @@ body{
 
   color: red;
   font-weight: bolder;
-  height: 50px;
-  width: 50px;
+  height: 57px;
+  width: 57px;
   border-radius: 50%;
   bottom: 2%;
   left: 10%;
   touch-action: none;
-  user-select: none;
-
 }
+#laser{
+  position: absolute;
+  background: white;
+  border: 2px solid gold;
+  font-size: 1em;
+
+  color: gold;
+  font-weight: bolder;
+  height: 30px;
+  width: 60px;
+  border-radius: 50%;
+  bottom: 2.8%;
+  left:30%;
+  touch-action: none;
+}
+
 
 
 
 #left_btn , #right_btn{
   position: absolute;
   background: white;
-  border: 2px solid red;
+  border: 2px solid black;
 
-  color: red;
+  color: black;
   height: 40px;
   width: 50px;
   font-size: 2em;
   font-weight: bolder;
-  user-select: none;
-
-
   touch-action: none;
 }
 
@@ -83,7 +95,7 @@ body{
 }
 
 @media (min-width: 600px){
-  #shoot, #left_btn, #right_btn{
+  #shoot, #left_btn, #right_btn, #laser{
     display: none;
   }
 

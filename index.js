@@ -13,25 +13,55 @@ class Laser {
     context.save();
     context.fillStyle = 'red';
     context.fillRect(this.x, this.y, this.width, this.height);
-    context.fillStyle = 'yellow';
-    context.fillRect(this.x + this.width * 0.2, this.y, this.width * 0.6, this.height);
+    context.fillStyle = 'white';
+    context.fillRect(this.x + this.width * 0.3, this.y, this.width * 0.4, this.height);
     context.restore();
+
+    //------------check laser collision with enemy wavehere-----------------
+    if(this.game.spriteUpdate){
+      this.game.waves.forEach(wave =>{
+        wave.enemies.forEach(enemy => {
+          if(this.game.checkCollision(enemy, this)){
+            enemy.hit(this.damage);
+          }
+        });
+      });
+      this.game.bossArray.forEach(boss =>{
+        if (this.game.checkCollision(boss, this)){
+          boss.hit(this.damage);
+        }
+      });
+    }
+
   }
 }
+
 
 class SmallLaser extends Laser {
   constructor(game) {
     super(game);
-    this.width = 5;
+    this.width = 6;
+    this.damage = 0.3;
 
   }
   render(context) {
+
     super.render(context); // call the render method of the superclass
   }
-}
-class BigLaser extends Laser {
+}// end small laser class
 
-}
+class BigLaser extends Laser {
+  constructor(game) {
+    super(game);
+    this.width = 18;
+    this.damage = 0.7;
+
+  }
+  render(context) {
+
+    super.render(context); // call the render method of the superclass
+  }
+}// end big laser
 class Player {
   constructor(game) {
     this.game = game;
@@ -47,15 +77,23 @@ class Player {
     this.maxLives = 10;
     this.jetsFrame = 1;
     this.SmallLaser = new SmallLaser(this.game);
+    this.bigLaser = new BigLaser(this.game);
+
   }
   draw(context) {
-    // sprite frames
+    // sprite frames and Laser triggers
     if (this.game.keys.indexOf(' ') > -1) {
       this.frameX = 1;
     } else if (this.game.keys.indexOf('1') > -1) {
       this.frameX = 2;
       this.SmallLaser.render(context);
-    } else {
+    } else if(this.game.keys.indexOf('2') > -1){
+      this.frameX = 3;
+      this.bigLaser.render(context);
+    }else if (this.game.btn_press.indexOf('laser') > -1){
+      this.SmallLaser.render(context);
+    }
+    else {
       this.frameX = 0;
     }
     context.drawImage(this.jets_image, this.jetsFrame * this.width, 0, this.width, this.height,
@@ -104,8 +142,13 @@ class Player {
   }
 
   shoot() {
+
     const projectile = this.game.getProjectile();
-    if (projectile) projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
+
+    if (projectile){
+
+      projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
+    }
   }
 
   restart() {
@@ -116,13 +159,15 @@ class Player {
 } // End Player Class
 
 class Projectile { // using object polling
-  constructor() {
+  constructor(game) {
+    this.game = game;
     this.width = 4;
     this.height = 20;
     this.x = 0;
     this.y = 0;
     this.speed = 20;
     this.free = true;
+
   }
   draw(context) {
     if (!this.free) {
@@ -228,24 +273,25 @@ class Boss {
   draw(context) {
     context.drawImage(this.bossImage, this.frameX * this.width, this.frameY * this.height, this.width,
       this.height, this.x, this.y, this.width, this.height);
+    if(this.lives >= 1){
     context.save();
     context.textAlign = 'center';
     context.fillStyle = 'white';
     context.shadowOffsetX = 2;
     context.shadowOffsetY = 2;
     context.shadowColor = 'black';
-    if (this.lives != '0')
-      context.fillText(this.lives, this.x + this.width * 0.5, this.y);
+    context.fillText(Math.floor(this.lives), this.x + this.width * 0.5, this.y + 50);
     context.restore();
+    }
   }
 
   update() {
     this.speedY = 0;
-    if (this.game.spriteUpdate && this.lives > 0) this.frameX = 0;
+    if (this.game.spriteUpdate && this.lives >= 1) this.frameX = 0;
     if (this.y < 0) this.y += 3;
-    if (this.x < 0 || this.x > this.game.width - this.width && this.lives > 0) {
+    if (this.x < 0 || this.x > this.game.width - this.width && this.lives >= 1) {
       this.speedX *= -1;
-      this.speedY = this.height * 0.2;
+      this.speedY = this.height * 0.4;
     }
     this.x = this.x + this.speedX;
     this.y += this.speedY;
@@ -253,14 +299,14 @@ class Boss {
     //--------------------collision detect projectiles-----------
     this.game.projectilesPool.forEach(projectile => {
       if (this.game.checkCollision(this, projectile) && !projectile.free &&
-        this.lives > 0 && this.y >= 0) {
+        this.lives >= 1 && this.y >= 0) {
         // this.lives--;
         this.hit(1);
         projectile.reset();
       }
     });
     // collision detection boss/player
-    if (this.game.checkCollision(this, this.game.player) && this.lives > 0) {
+    if (this.game.checkCollision(this, this.game.player) && this.lives >= 1) {
       this.game.gameOver = true;
       this.lives = 0;
     }
@@ -281,7 +327,7 @@ class Boss {
 
   hit(damage) {
     this.lives -= damage;
-    if (this.lives > 0) {
+    if (this.lives >= 1) {
       this.frameX = 2;
     }
   }
@@ -368,7 +414,7 @@ class Rhinomorph extends Enemy {
   }
 }
 class Game {
-  constructor(canvas, btn) {
+  constructor(canvas, shoot_btn, laser_btn) {
     this.canvas = canvas;
     this.width = this.canvas.width;
     this.height = this.canvas.height;
@@ -377,6 +423,9 @@ class Game {
     this.keys = [];
     this.score = 0;
     this.gameOver = false;
+
+
+
 
 
     //-------------Projectiles------------
@@ -407,14 +456,30 @@ class Game {
     this.restart(); // when boss appaers you restart
     //---------------------------------
     // ----------------------button control fire, left, right-------------
-    btn.addEventListener('click', e => {
 
+    laser_btn.addEventListener('touchstart', e =>{
+      e.preventDefault();
+      if(this.btn_press.indexOf('laser') === -1) this.btn_press.push('laser');
+
+    });
+
+    laser_btn.addEventListener('touchend', e => {
+      // lets make sure that the btn_press array only has 0ne btn entry per btn push
+      const index = this.btn_press.indexOf('laser');
+      if (index > -1) this.btn_press.splice(index, 1);
+
+
+    });
+
+    shoot_btn.addEventListener('touchstart', e => {
+      e.preventDefault();
       this.player.shoot();
       this.fired = true;
     });
 
     left_btn.addEventListener('touchstart', e => {
       // lets make sure that the btn_press array only has 0ne btn entry per btn push
+      e.preventDefault();// prevent long touch popups
       if(this.btn_press.indexOf('left') === -1) this.btn_press.push('left');
 
     });
@@ -425,7 +490,7 @@ class Game {
 
     });
     right_btn.addEventListener('touchstart', e => {
-
+      e.preventDefault();
       if(this.btn_press.indexOf('right') === -1) this.btn_press.push('right');
     });
 
@@ -502,7 +567,7 @@ class Game {
   // create object pool projectiles-------------------
   createProjectiles() {
     for (let i = 0; i < this.numberOfPrjectiles; i++) {
-      this.projectilesPool.push(new Projectile());
+      this.projectilesPool.push(new Projectile(this));
     }
   }
   getProjectile() {
@@ -597,9 +662,18 @@ class Game {
 
 window.addEventListener('load', function() {
   const canvas = document.getElementById('canvas1');
-  const btn = document.getElementById('shoot');
+  const shoot_btn = document.getElementById('shoot');
+  const laser_btn = document.getElementById('laser');
   const left_btn = document.getElementById('left_btn');
   const right_btn = document.getElementById('right_btn');
+
+  //-----------------Sounds------------------------------
+
+
+
+  //small_laser.loop = true;
+  //crowSounds.play();
+
 
 
 
@@ -614,7 +688,7 @@ window.addEventListener('load', function() {
   // ctx.lineWidth = 5;
   ctx.font = '30px Impact';
 
-  const game = new Game(canvas, btn);
+  const game = new Game(canvas, shoot_btn, laser_btn);
 
 
 
