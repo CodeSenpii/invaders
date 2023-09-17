@@ -45,8 +45,10 @@ class SmallLaser extends Laser {
 
   }
   render(context) {
+    if(this.game.player.energy > 1 && !this.game.player.coolDown){
+      super.render(context); // call the render method of the superclass
+    }
 
-    super.render(context); // call the render method of the superclass
   }
 }// end small laser class
 
@@ -58,8 +60,11 @@ class BigLaser extends Laser {
 
   }
   render(context) {
+    if(this.game.player.energy > 1 && !this.game.player.coolDown){
+      super.render(context); // call the render method of the superclass
+    }
 
-    super.render(context); // call the render method of the superclass
+    // super.render(context); // call the render method of the superclass
   }
 }// end big laser
 class Player {
@@ -111,7 +116,7 @@ class Player {
       this.energy += 0.05;
     }
     if (this.energy < 1) this.coolDown = true;
-    else if (this.energy > this.maxEnergy * 0.2) this.coolDown = false;
+    else if (this.energy > this.maxEnergy * 0.5) this.coolDown = false;
     //   if(this.x < this.game.width - this.width){
     //   this.x += this.speed;
     // }
@@ -629,7 +634,7 @@ class Game {
       // context.strokeRect();
       // context.fillStyle = 'tomato';
 
-      this.player.coolDown ? context.fillStyle = 'red' : context.fillStyle ='lightgreen';
+      this.player.coolDown ? context.fillStyle = 'red' : context.fillStyle ='lime';
 
 
       context.globalAlpha = 0.7;
