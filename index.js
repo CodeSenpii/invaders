@@ -87,11 +87,15 @@ class Player {
     this.maxEnergy = 75;
     this.coolDown = false;
 
+
+
+
   }
   draw(context) {
     // sprite frames and Laser triggers
     if (this.game.keys.indexOf(' ') > -1) {
       this.frameX = 1;
+
     } else if (this.game.keys.indexOf('1') > -1) {
       this.frameX = 2;
       this.SmallLaser.render(context);
@@ -181,6 +185,9 @@ class Projectile { // using object polling
     this.speed = 20;
     this.free = true;
 
+
+
+
   }
   draw(context) {
     if (!this.free) {
@@ -189,17 +196,24 @@ class Projectile { // using object polling
       context.fillRect(this.x, this.y, this.width, this.height);
       context.restore();
     }
+
+
   } // End Projectile draw method
   update() {
     if (!this.free) {
+
+
       this.y -= this.speed;
+
       if (this.y < -this.height) this.reset();
     }
   } //end Projectile update method
   start(x, y) {
     // set to player position x,y
+
     this.x = x - (this.width * 0.5);
     this.y = y;
+
     this.free = false;
   }
   reset() {
@@ -436,6 +450,9 @@ class Game {
     this.keys = [];
     this.score = 0;
     this.gameOver = false;
+    this.canonSound = new Audio();
+    this.canonSound.src = 'assets/smallLaser.mp3';
+
 
 
 
@@ -473,6 +490,7 @@ class Game {
     laser_btn.addEventListener('touchstart', e =>{
       e.preventDefault();
       if(this.btn_press.indexOf('laser') === -1) this.btn_press.push('laser');
+      this.player.frameX = 2;
 
     });
 
@@ -480,13 +498,16 @@ class Game {
       // lets make sure that the btn_press array only has 0ne btn entry per btn push
       const index = this.btn_press.indexOf('laser');
       if (index > -1) this.btn_press.splice(index, 1);
+      this.player.frameX = 1;
 
 
     });
 
     shoot_btn.addEventListener('touchstart', e => {
       e.preventDefault();
+      
       this.player.shoot();
+
       this.fired = true;
     });
 
