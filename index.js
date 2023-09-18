@@ -452,8 +452,9 @@ class Game {
     this.keys = [];
     this.score = 0;
     this.gameOver = false;
-    this.canonSound = new Audio();
-    this.canonSound.src = 'assets/smallLaser.mp3';
+    this.mega = mega_beam;
+
+    // this.canonSound.src = 'assets/smallLaser.mp3';
 
 
 
@@ -674,7 +675,8 @@ class Game {
       // context.fillStyle = 'tomato';
 
       this.player.coolDown ? context.fillStyle = 'red' : context.fillStyle ='lime';
-
+      this.player.coolDown ? this.mega.style.color = 'red' : this.mega.style.color = 'white';
+      this.player.coolDown ? this.mega.style.borderColor = 'red' : this.mega.style.borderColor = 'green';
 
       context.globalAlpha = 0.7;
       context.fillRect(20 + 2*i, 110, 2, 15);
@@ -740,6 +742,8 @@ window.addEventListener('load', function() {
   const left_btn = document.getElementById('left_btn');
   const right_btn = document.getElementById('right_btn');
   const mega_beam = document.getElementById('mega');
+
+  // console.log(mega_beam.style);
 
   //-----------------Sounds------------------------------
 
