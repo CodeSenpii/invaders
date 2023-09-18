@@ -67,6 +67,22 @@ body{
   touch-action: none;
 }
 
+#mega{
+  position: absolute;
+  background: black;
+  border: 2px solid green;
+  font-size: 1em;
+
+  color: white;
+  font-weight: bolder;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  bottom: 2.5%;
+  left:45%;
+  touch-action: none;
+}
+
 
 
 
@@ -85,17 +101,17 @@ body{
 
 #left_btn {
   bottom: 2%;
-  right: 26%;
+  right: 24%;
   border-radius: 10% 20%;
 }
 #right_btn{
   bottom: 2%;
-  right: 12%;
+  right: 10%;
   border-radius: 20% 10%;
 }
 
 @media (min-width: 600px){
-  #shoot, #left_btn, #right_btn, #laser{
+  #shoot, #left_btn, #right_btn, #laser, #mega{
     display: none;
   }
 

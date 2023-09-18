@@ -104,8 +104,10 @@ class Player {
       this.bigLaser.render(context);
     }else if (this.game.btn_press.indexOf('laser') > -1){
       this.SmallLaser.render(context);
-    }
-    else {
+    }else if (this.game.btn_press.indexOf('mega') > -1){
+      // this.frameX = 3;
+      this.bigLaser.render(context);
+    } else {
       this.frameX = 0;
      }
     context.drawImage(this.jets_image, this.jetsFrame * this.width, 0, this.width, this.height,
@@ -441,7 +443,7 @@ class Rhinomorph extends Enemy {
   }
 }
 class Game {
-  constructor(canvas, shoot_btn, laser_btn) {
+  constructor(canvas, shoot_btn, laser_btn, mega_beam) {
     this.canvas = canvas;
     this.width = this.canvas.width;
     this.height = this.canvas.height;
@@ -487,6 +489,22 @@ class Game {
     //---------------------------------
     // ----------------------button control fire, left, right-------------
 
+      mega_beam.addEventListener('touchstart', e =>{
+      e.preventDefault();
+      if(this.btn_press.indexOf('mega') === -1) this.btn_press.push('mega');
+      this.player.frameX = 3;
+
+    });
+
+     mega_beam.addEventListener('touchend', e => {
+      // lets make sure that the btn_press array only has 0ne btn entry per btn push
+      const index = this.btn_press.indexOf('mega');
+      if (index > -1) this.btn_press.splice(index, 1);
+      this.player.frameX = 1;
+
+
+    });
+
     laser_btn.addEventListener('touchstart', e =>{
       e.preventDefault();
       if(this.btn_press.indexOf('laser') === -1) this.btn_press.push('laser');
@@ -505,7 +523,7 @@ class Game {
 
     shoot_btn.addEventListener('touchstart', e => {
       e.preventDefault();
-      
+
       this.player.shoot();
 
       this.fired = true;
@@ -721,6 +739,7 @@ window.addEventListener('load', function() {
   const laser_btn = document.getElementById('laser');
   const left_btn = document.getElementById('left_btn');
   const right_btn = document.getElementById('right_btn');
+  const mega_beam = document.getElementById('mega');
 
   //-----------------Sounds------------------------------
 
@@ -743,7 +762,7 @@ window.addEventListener('load', function() {
   // ctx.lineWidth = 5;
   ctx.font = '30px Impact';
 
-  const game = new Game(canvas, shoot_btn, laser_btn);
+  const game = new Game(canvas, shoot_btn, laser_btn, mega_beam);
 
 
 
