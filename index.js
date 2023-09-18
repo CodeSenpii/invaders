@@ -86,6 +86,8 @@ class Player {
     this.energy = 50;
     this.maxEnergy = 75;
     this.coolDown = false;
+    this.laserSound = new Audio();
+    this.laserSound.src = 'assets/SmallLaser.mp3';
 
 
 
@@ -165,7 +167,7 @@ class Player {
     const projectile = this.game.getProjectile();
 
     if (projectile){
-
+      this.play();
       projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
     }
   }
@@ -174,6 +176,11 @@ class Player {
     this.x = this.game.width * 0.5 - (this.width * 0.5);
     this.y = this.game.height - this.height;
     this.lives = 3;
+  }
+
+  play(){
+    this.laserSound.currentTime = 0;
+    this.laserSound.play();
   }
 } // End Player Class
 
