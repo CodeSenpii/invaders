@@ -18,16 +18,16 @@ class Laser {
     context.restore();
 
     //------------check laser collision with enemy wavehere-----------------
-    if(this.game.spriteUpdate){
-      this.game.waves.forEach(wave =>{
+    if (this.game.spriteUpdate) {
+      this.game.waves.forEach(wave => {
         wave.enemies.forEach(enemy => {
-          if(this.game.checkCollision(enemy, this)){
+          if (this.game.checkCollision(enemy, this)) {
             enemy.hit(this.damage);
           }
         });
       });
-      this.game.bossArray.forEach(boss =>{
-        if (this.game.checkCollision(boss, this) && boss.y >= 0){
+      this.game.bossArray.forEach(boss => {
+        if (this.game.checkCollision(boss, this) && boss.y >= 0) {
           boss.hit(this.damage);
         }
       });
@@ -45,12 +45,12 @@ class SmallLaser extends Laser {
 
   }
   render(context) {
-    if(this.game.player.energy > 1 && !this.game.player.coolDown){
+    if (this.game.player.energy > 1 && !this.game.player.coolDown) {
       super.render(context); // call the render method of the superclass
     }
 
   }
-}// end small laser class
+} // end small laser class
 
 class BigLaser extends Laser {
   constructor(game) {
@@ -60,13 +60,13 @@ class BigLaser extends Laser {
 
   }
   render(context) {
-    if(this.game.player.energy > 1 && !this.game.player.coolDown){
+    if (this.game.player.energy > 1 && !this.game.player.coolDown) {
       super.render(context); // call the render method of the superclass
     }
 
     // super.render(context); // call the render method of the superclass
   }
-}// end big laser
+} // end big laser
 class Player {
   constructor(game) {
     this.game = game;
@@ -87,8 +87,12 @@ class Player {
     this.maxEnergy = 75;
     this.coolDown = false;
     this.laserSound = new Audio();
-    this.laserSound.src = 'assets/SmallLaser.mp3';
-
+    this.laserSound.src = 'assets/smallLaser.mp3';
+    this.ammoClick = new Audio();
+    this.ammoClick.src = 'assets/ammoClick.mp3';
+    this.smallLaserSound = new Audio();
+    this.smallLaserSound.src = 'assets/smallLaserSound.mp3';
+    this.smallLaserSound.volume = 0.5;
 
 
 
@@ -99,19 +103,43 @@ class Player {
       this.frameX = 1;
 
     } else if (this.game.keys.indexOf('1') > -1) {
-      this.frameX = 2;
-      this.SmallLaser.render(context);
-    } else if(this.game.keys.indexOf('2') > -1){
-      this.frameX = 3;
-      this.bigLaser.render(context);
-    }else if (this.game.btn_press.indexOf('laser') > -1){
-      this.SmallLaser.render(context);
-    }else if (this.game.btn_press.indexOf('mega') > -1){
+      if (!this.coolDown) {
+        this.smallLaserSound.currentTime = 0;
+        this.frameX = 2;
+        this.SmallLaser.render(context);
+        this.smallLaserSound.play();
+      }else{
+        this.framX = 1;
+        this.ammoClick.play();
+      }
+
+    } else if (this.game.keys.indexOf('2') > -1) {
+      if (!this.coolDown) {
+        this.frameX = 3;
+        this.bigLaser.render(context);
+        this.game.megaSound.play();
+      } else {
+        this.framX = 1;
+        this.ammoClick.play();
+      }
+    } else if (this.game.btn_press.indexOf('laser') > -1) {
+      if (!this.coolDown) {
+        this.smallLaserSound.currentTime = 0;
+        this.frameX = 2;
+        this.SmallLaser.render(context);
+        this.smallLaserSound.play();
+      }else{
+        this.framX = 1;
+        this.ammoClick.play();
+      }
+
+
+    } else if (this.game.btn_press.indexOf('mega') > -1) {
       // this.frameX = 3;
       this.bigLaser.render(context);
     } else {
       this.frameX = 0;
-     }
+    }
     context.drawImage(this.jets_image, this.jetsFrame * this.width, 0, this.width, this.height,
       this.x, this.y, this.width, this.height);
     // context.fillRect(this.x, this.y, this.width, this.height);
@@ -120,7 +148,7 @@ class Player {
   }
   update() {
     //energy
-    if (this.energy < this.maxEnergy){
+    if (this.energy < this.maxEnergy) {
       this.energy += 0.05;
     }
     if (this.energy < 1) this.coolDown = true;
@@ -128,7 +156,7 @@ class Player {
     //   if(this.x < this.game.width - this.width){
     //   this.x += this.speed;
     // }
-// this block handles left and right movements for keys and touch screen inputs
+    // this block handles left and right movements for keys and touch screen inputs
 
     if (this.game.keys.indexOf('ArrowLeft') > -1 || this.game.btn_press.indexOf('left') > -1) {
       this.x -= this.speed;
@@ -166,7 +194,7 @@ class Player {
 
     const projectile = this.game.getProjectile();
 
-    if (projectile){
+    if (projectile) {
       this.play();
       projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
     }
@@ -178,7 +206,8 @@ class Player {
     this.lives = 3;
   }
 
-  play(){
+  play() {
+    this.laserSound.volume = 0.3;
     this.laserSound.currentTime = 0;
     this.laserSound.play();
   }
@@ -309,15 +338,15 @@ class Boss {
   draw(context) {
     context.drawImage(this.bossImage, this.frameX * this.width, this.frameY * this.height, this.width,
       this.height, this.x, this.y, this.width, this.height);
-    if(this.lives >= 1){
-    context.save();
-    context.textAlign = 'center';
-    context.fillStyle = 'white';
-    context.shadowOffsetX = 2;
-    context.shadowOffsetY = 2;
-    context.shadowColor = 'black';
-    context.fillText(Math.floor(this.lives), this.x + this.width * 0.5, this.y + 50);
-    context.restore();
+    if (this.lives >= 1) {
+      context.save();
+      context.textAlign = 'center';
+      context.fillStyle = 'white';
+      context.shadowOffsetX = 2;
+      context.shadowOffsetY = 2;
+      context.shadowColor = 'black';
+      context.fillText(Math.floor(this.lives), this.x + this.width * 0.5, this.y + 50);
+      context.restore();
     }
   }
 
@@ -460,6 +489,8 @@ class Game {
     this.score = 0;
     this.gameOver = false;
     this.mega = mega_beam;
+    this.megaSound = new Audio();
+    this.megaSound.src = 'assets/mega.mp3';
 
     // this.canonSound.src = 'assets/smallLaser.mp3';
 
@@ -497,25 +528,33 @@ class Game {
     //---------------------------------
     // ----------------------button control fire, left, right-------------
 
-      mega_beam.addEventListener('touchstart', e =>{
+    mega_beam.addEventListener('touchstart', e => {
       e.preventDefault();
-      if(this.btn_press.indexOf('mega') === -1) this.btn_press.push('mega');
-      this.player.frameX = 3;
+      if (this.btn_press.indexOf('mega') === -1) this.btn_press.push('mega');
+      if (!this.player.coolDown) {
+        this.megaSound.currentTime = 0;
+        this.megaSound.play();
+        this.player.frameX = 3;
+      } else {
+        this.player.frameX = 1;
+        this.player.ammoClick.play();
+      }
+
 
     });
 
-     mega_beam.addEventListener('touchend', e => {
+    mega_beam.addEventListener('touchend', e => {
       // lets make sure that the btn_press array only has 0ne btn entry per btn push
       const index = this.btn_press.indexOf('mega');
       if (index > -1) this.btn_press.splice(index, 1);
       this.player.frameX = 1;
-
+      // this.megaSound.currentTime = 0;
 
     });
 
-    laser_btn.addEventListener('touchstart', e =>{
+    laser_btn.addEventListener('touchstart', e => {
       e.preventDefault();
-      if(this.btn_press.indexOf('laser') === -1) this.btn_press.push('laser');
+      if (this.btn_press.indexOf('laser') === -1) this.btn_press.push('laser');
       this.player.frameX = 2;
 
     });
@@ -539,8 +578,8 @@ class Game {
 
     left_btn.addEventListener('touchstart', e => {
       // lets make sure that the btn_press array only has 0ne btn entry per btn push
-      e.preventDefault();// prevent long touch popups
-      if(this.btn_press.indexOf('left') === -1) this.btn_press.push('left');
+      e.preventDefault(); // prevent long touch popups
+      if (this.btn_press.indexOf('left') === -1) this.btn_press.push('left');
 
     });
     left_btn.addEventListener('touchend', e => {
@@ -551,7 +590,7 @@ class Game {
     });
     right_btn.addEventListener('touchstart', e => {
       e.preventDefault();
-      if(this.btn_press.indexOf('right') === -1) this.btn_press.push('right');
+      if (this.btn_press.indexOf('right') === -1) this.btn_press.push('right');
     });
 
     right_btn.addEventListener('touchend', e => {
@@ -671,22 +710,22 @@ class Game {
 
     // energy
 
-    for (let i = 0; i < this.player.energy; i++){
+    for (let i = 0; i < this.player.energy; i++) {
 
       context.save();
       context.fillStyle = 'white';
       context.font = '15px Impact';
-      context.fillText('Laser Status', 20,100);
+      context.fillText('Laser Status', 20, 100);
       // context.strokeStyle = 'white';
       // context.strokeRect();
       // context.fillStyle = 'tomato';
 
-      this.player.coolDown ? context.fillStyle = 'red' : context.fillStyle ='lime';
+      this.player.coolDown ? context.fillStyle = 'red' : context.fillStyle = 'lime';
       this.player.coolDown ? this.mega.style.color = 'red' : this.mega.style.color = 'white';
       this.player.coolDown ? this.mega.style.borderColor = 'red' : this.mega.style.borderColor = 'green';
 
       context.globalAlpha = 0.7;
-      context.fillRect(20 + 2*i, 110, 2, 15);
+      context.fillRect(20 + 2 * i, 110, 2, 15);
 
       context.restore();
 
