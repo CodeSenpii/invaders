@@ -14,6 +14,9 @@ class Asteroid{
     this.free = true;// is the astroid in the pool free or not
     this.angle = 0;// rotation angle
     this.va = Math.random() * 0.02 - 0.01;
+    this.hitSound = new Audio();
+    this.hitSound.src = 'assets/hit.mp3';
+    this.hitSound.volume = 0.1;
 
 
 
@@ -44,7 +47,8 @@ class Asteroid{
     this.game.projectilesPool.forEach(projectile => {
       if (!projectile.free && this.game.checkCollisonAstroid(this, projectile)) {
         // this.markedForDeletion = true;
-
+        this.hitSound.currentTime = 0;
+        this.hitSound.play();
         projectile.reset();
         // if(!this.game.gameOver) this.game.score++;
       }
