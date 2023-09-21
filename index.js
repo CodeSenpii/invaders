@@ -888,7 +888,14 @@ class Game {
   } //------------------drawStatusText function ---------------------
   newWave() {
     this.waveCount++;
-    if (this.player.lives < this.player.maxLives) this.player.lives++;
+    console.log(this.waveCount);
+    if (this.player.lives < this.player.maxLives) {
+      if (this.waveCount% 6 === 0){
+        this.player.lives++;
+      }
+
+    }
+
 
     if (this.waveCount % 3 === 0) {
       this.bossArray.push(new Boss(this, this.bossLives));
