@@ -4,7 +4,7 @@ class Asteroid{
     this.game = game;
     this.radius = 73;
     this.x = -this.radius;
-    this.y = Math.random() * this.game.height;
+    this.y = Math.random() * (this.game.height - this.game.bottomMargin);
     this.image = document.getElementById('asteroid');
     this.image.src = 'assets/asteroid.png';
     this.spriteWidth = 150;
@@ -13,7 +13,7 @@ class Asteroid{
     this.speed = (Math.random() * 3 + 1) * 0.3;
     this.free = true;// is the astroid in the pool free or not
     this.angle = 0;// rotation angle
-    this.va = Math.random() * 0.02;
+    this.va = Math.random() * 0.02 - 0.01;
 
 
 
@@ -59,7 +59,7 @@ class Asteroid{
   start(){
     this.free = false;
     this.x = -this.radius;
-    this.y = Math.random() * this.game.height;
+    this.y = Math.random() * (this.game.height - this.game.bottomMargin);
   }
 
 }
@@ -587,8 +587,9 @@ class Game {
     //-------------------------------------
 
     //----------Asteroid Pool ------------
+    this.bottomMargin = 220;
     this.astroidPool = [];
-    this.maxAstroid = 3;
+    this.maxAstroid = 4;
     this.asteroidTimer = 0;
     this.asteroidInterval = 1000;
     this.createAsteroidPool();
