@@ -587,7 +587,7 @@ class Game {
     //-------------------------------------
 
     //----------Asteroid Pool ------------
-    this.bottomMargin = 220;
+    this.bottomMargin = 210;
     this.astroidPool = [];
     this.maxAstroid = 4;
     this.asteroidTimer = 0;
