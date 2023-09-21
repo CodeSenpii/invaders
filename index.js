@@ -1,4 +1,68 @@
 //jshint esversion:8
+class Asteroid{
+  constructor(game){
+    this.game = game;
+    this.radius = 73;
+    this.x = -this.radius;
+    this.y = Math.random() * this.game.height;
+    this.image = document.getElementById('asteroid');
+    this.image.src = 'assets/asteroid.png';
+    this.spriteWidth = 150;
+    this.spriteHeight = 155;
+
+    this.speed = (Math.random() * 3 + 1) * 0.3;
+    this.free = true;// is the astroid in the pool free or not
+    this.angle = 0;// rotation angle
+    this.va = Math.random() * 0.02;
+
+
+
+  }
+  render(context){
+    // if the asteroid is not available continue to draw it
+    if (!this.free){
+      context.beginPath();
+      // context.strokeRect(this.x, this.y, 70, 70);
+      context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      context.stroke();
+
+
+      context.save();
+      context.translate(this.x, this.y);
+      context.rotate(this.angle);
+      // because of the translate method this.x and this.y is set
+      // in drawImage this.x and this.y is now from 0
+      context.drawImage(this.image, 0 - this.spriteWidth * 0.5, 0 - this.spriteHeight * 0.5,
+      this.spriteWidth, this.spriteHeight);
+
+      //context.drawImage(this.image, this.x - this.spriteWidth * 0.5, this.y - this.spriteHeight * 0.5,
+      // this.spriteWidth, this.spriteHeight);
+      context.restore();
+    }
+
+  }
+
+  update(){
+    this.angle += this.va;
+    if (!this.free){
+      this.x += this.speed;
+      // if the asteroid has gone pass the area then return to pool and mark as available
+      if(this.x > this.game.width + this.radius){
+        this.reset();
+      }
+    }
+  }
+  reset(){
+    this.free = true;
+  }
+  // set the original values
+  start(){
+    this.free = false;
+    this.x = -this.radius;
+    this.y = Math.random() * this.game.height;
+  }
+
+}
 class Laser {
   constructor(game) {
     this.game = game;
@@ -484,6 +548,7 @@ class Game {
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this.player = new Player(this);
+    // this.astroid = new Asteroid(this);
     this.btn_press = [];
     this.keys = [];
     this.score = 0;
@@ -519,6 +584,14 @@ class Game {
     this.waves = [];
     // this.waves.push(new Wave(this));
     this.waveCount = 1;
+    //-------------------------------------
+
+    //----------Asteroid Pool ------------
+    this.astroidPool = [];
+    this.maxAstroid = 3;
+    this.asteroidTimer = 0;
+    this.asteroidInterval = 1000;
+    this.createAsteroidPool();
     //-------------------------------------
 
     //----------Boss---------------------
@@ -626,9 +699,20 @@ class Game {
 
     });
 
+
   } // End game Constructor
 
   render(context, deltaTime) {
+    // create asteroid periodically
+    if(this.asteroidTimer > this.asteroidInterval){
+      const asteroid = this.getAsteroid();
+
+      if (asteroid) asteroid.start();
+      this.asteroidTimer = 0;
+    }else{
+      this.asteroidTimer += deltaTime;
+    }
+
     // sprite timeingif
     if (this.spriteTimer > this.spriteInterval) {
       this.spriteUpdate = true;
@@ -639,6 +723,17 @@ class Game {
     }
     this.drawStatusText(context);
     this.player.draw(context);
+
+
+    this.astroidPool.forEach(astroid =>{
+      astroid.render(context);
+      astroid.update();
+    });
+
+    // this.astroid.render(context, deltaTime);
+
+
+
     this.player.update();
     this.projectilesPool.forEach(projectile => {
       projectile.update();
@@ -661,7 +756,7 @@ class Game {
         // if (this.player.lives < this.player.maxLives && this.waveCount % 3 === 0) this.player.lives++;
       }
     });
-  }
+  } // end render
 
   // create object pool projectiles-------------------
   createProjectiles() {
@@ -674,7 +769,22 @@ class Game {
       if (this.projectilesPool[i].free) return this.projectilesPool[i];
     }
   }
-  //-------------Projectile Pool-------------------------------
+  //-------------Projectile Pool end-------------------------------
+  //-------------------Astriod pool create----------------
+  createAsteroidPool(){
+    for (let i = 0; i < this.maxAstroid; i++){
+      this.astroidPool.push(new Asteroid(this));
+    }
+  }
+
+  getAsteroid(){
+    for (let i = 0; i < this.astroidPool.length; i++){
+      if (this.astroidPool[i].free){
+        return this.astroidPool[i];
+      }
+    }
+  }
+  //---------------------Asteroid pool--------------------
 
   //----------------Collision-------------------------
   checkCollision(a, b) {

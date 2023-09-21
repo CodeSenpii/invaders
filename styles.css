@@ -26,7 +26,7 @@ body{
   background-size: cover;
   /* overflow: hidden; */
 }
-#beetlemorph, #player, #player_jets, #rhinomorph, #boss{
+#beetlemorph,#asteroid, #player, #player_jets, #rhinomorph, #boss{
   display: none;
 }
 
@@ -111,7 +111,7 @@ body{
 }
 
 @media (min-width: 600px){
-  #shoot, #left_btn, #right_btn, #laser, #mega{
+  #shoot, #left_btn, #right_btn, #laser, #mega, #asteroid{
     display: none;
   }
 
