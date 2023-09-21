@@ -24,11 +24,13 @@ class Asteroid{
   render(context){
     // if the asteroid is not available continue to draw it
     if (!this.free){
+      context.save();
       context.beginPath();
       // context.strokeRect(this.x, this.y, 70, 70);
       context.strokeStyle = 'transparent';
       context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
       context.stroke();
+        context.restore();
 
 
       context.save();
@@ -583,7 +585,6 @@ class Game {
     this.projectilesPool = [];
     this.numberOfPrjectiles = 15;
     this.createProjectiles();
-
     //-------------------------------------
     //----------timeing frames------------
     this.spriteUpdate = false;
@@ -846,7 +847,6 @@ class Game {
     }
 
     for (let i = 0; i < this.player.lives; i++) {
-
       context.fillRect(20 + 15 * i, 60, 10, 15);
     }
 
@@ -888,8 +888,8 @@ class Game {
   } //------------------drawStatusText function ---------------------
   newWave() {
     this.waveCount++;
-    console.log(this.waveCount);
-    if (this.player.lives < this.player.maxLives) {
+
+       if (this.player.lives < this.player.maxLives) {
       if (this.waveCount% 6 === 0){
         this.player.lives++;
       }
