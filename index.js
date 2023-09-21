@@ -3,7 +3,7 @@ class Asteroid{
   constructor(game){
     this.game = game;
     this.radius = 73;
-    this.x = -this.radius;
+    this.x = -(Math.random() * 3 + 1) * this.radius;
     this.y = Math.random() * (this.game.height - this.game.bottomMargin);
     this.image = document.getElementById('asteroid');
     this.image.src = 'assets/asteroid.png';
@@ -58,7 +58,7 @@ class Asteroid{
   // set the original values
   start(){
     this.free = false;
-    this.x = -this.radius;
+    this.x = -(Math.random() * 3 + 1) * this.radius;
     this.y = Math.random() * (this.game.height - this.game.bottomMargin);
   }
 
