@@ -23,6 +23,7 @@ class Asteroid{
     if (!this.free){
       context.beginPath();
       // context.strokeRect(this.x, this.y, 70, 70);
+      context.strokeStyle = 'transparent';
       context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
       context.stroke();
 
@@ -38,8 +39,16 @@ class Asteroid{
       //context.drawImage(this.image, this.x - this.spriteWidth * 0.5, this.y - this.spriteHeight * 0.5,
       // this.spriteWidth, this.spriteHeight);
       context.restore();
-    }
 
+    }
+    this.game.projectilesPool.forEach(projectile => {
+      if (!projectile.free && this.game.checkCollisonAstroid(this, projectile)) {
+        // this.markedForDeletion = true;
+
+        projectile.reset();
+        // if(!this.game.gameOver) this.game.score++;
+      }
+    });
   }
 
   update(){
@@ -343,7 +352,7 @@ class Enemy {
   update(x, y) {
     this.x = x + this.positionX;
     this.y = y + this.positionY;
-    // check collision here
+    // check collision here for Projectiles ----------------------
     this.game.projectilesPool.forEach(projectile => {
       if (!projectile.free && this.game.checkCollision(this, projectile) &&
         this.lives > 0) {
@@ -434,6 +443,7 @@ class Boss {
         projectile.reset();
       }
     });
+
     // collision detection boss/player
     if (this.game.checkCollision(this, this.game.player) && this.lives >= 1) {
       this.game.gameOver = true;
@@ -793,6 +803,23 @@ class Game {
       a.x + a.width > b.x &&
       a.y < b.y + b.height &&
       a.y + a.height > b.y);
+  }
+
+  checkCollisonAstroid(asteroid, rect){
+    var distX = Math.abs(asteroid.x - rect.x - rect.width/2);
+     var distY = Math.abs(asteroid.y - rect.y - rect.height/2);
+
+     if (distX > (rect.width/2 + asteroid.radius)) { return false; }
+     if (distY > (rect.height/2 + asteroid.radius)) { return false; }
+
+     if (distX <= (rect.width/2)) { return true; }
+     if (distY <= (rect.height/2)) { return true; }
+
+     // also test for corner collisions
+     var dx=distX-rect.width/2;
+     var dy=distY-rect.height/2;
+     return (dx*dx+dy*dy<=(asteroid.radius*asteroid.radius));
+
   }
   //--------------------------------------------------
   // ----------------Game Text------------------------
