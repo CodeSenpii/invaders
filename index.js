@@ -17,9 +17,6 @@ class Asteroid{
     this.hitSound = new Audio();
     this.hitSound.src = 'assets/hit.mp3';
     this.hitSound.volume = 0.1;
-
-
-
   }
   render(context){
     // if the asteroid is not available continue to draw it
@@ -145,7 +142,7 @@ class BigLaser extends Laser {
 
     // super.render(context); // call the render method of the superclass
   }
-} // end big laser
+} //---------------end big laser-------------
 class Player {
   constructor(game) {
     this.game = game;
@@ -172,9 +169,6 @@ class Player {
     this.smallLaserSound = new Audio();
     this.smallLaserSound.src = 'assets/smallLaserSound.mp3';
     this.smallLaserSound.volume = 0.5;
-
-
-
   }
   draw(context) {
     // sprite frames and Laser triggers
@@ -266,8 +260,7 @@ class Player {
     //   this.game.keys.splice(index);
     // }
 
-
-  }
+  }// end update -------------------------------
 
   shoot() {
 
@@ -292,6 +285,42 @@ class Player {
   }
 } // End Player Class
 
+class BossBombs{
+  constructor(game){
+    this.game = game;
+    this.width = 4;
+    this.height = 20;
+    this.x = 0;
+    this.y = 0;
+    this.speed = 10;
+    this.free = true;
+  }
+  draw(context) {
+    if (!this.free) {
+      context.save();
+      context.fillStyle = 'white';
+      context.fillRect(this.x, this.y, this.width, this.height);
+      context.restore();
+    }
+  } // End Projectile draw method
+
+  update() {
+    if (!this.free) {
+      this.y += this.speed;
+      if (this.y > this.height) this.reset();
+    }
+  } //end boss bombs update method
+  start(x, y) {
+    // set to player position x,y
+    this.x = x - (this.width * 0.5);
+    this.y = y;
+    this.free = false;
+  }
+  reset() {
+    this.free = true;
+  }
+}//---end boss bombs class
+
 class Projectile { // using object polling
   constructor(game) {
     this.game = game;
@@ -301,10 +330,6 @@ class Projectile { // using object polling
     this.y = 0;
     this.speed = 20;
     this.free = true;
-
-
-
-
   }
   draw(context) {
     if (!this.free) {
@@ -313,33 +338,25 @@ class Projectile { // using object polling
       context.fillRect(this.x, this.y, this.width, this.height);
       context.restore();
     }
-
-
   } // End Projectile draw method
   update() {
     if (!this.free) {
-
-
       this.y -= this.speed;
-
       if (this.y < -this.height) this.reset();
     }
   } //end Projectile update method
   start(x, y) {
     // set to player position x,y
-
     this.x = x - (this.width * 0.5);
     this.y = y;
-
     this.free = false;
   }
   reset() {
     this.free = true;
   }
 
-
-
 } // End Projectile class
+
 class Enemy {
   constructor(game, positionX, positionY) {
     this.game = game;
@@ -468,6 +485,14 @@ class Boss {
     //lose condition
     if (this.y + this.height > this.game.height) this.game.gameOver = true;
 
+  }//------------- end update --------------------
+  // -----------------
+  BossBombDrop() {
+
+    const projectile = this.game.getBossBombs();
+    if (projectile) {
+      projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
+    }
   }
 
   hit(damage) {
@@ -577,7 +602,12 @@ class Game {
 
 
 
-
+    //----------BossBombs----------------
+    this.bossFired = false;
+    this.bossBombsPool = [];
+    this.bossBombsnumber = 15;
+    this.createBossBombs();
+    //------------------------------------
 
 
     //-------------Projectiles------------
@@ -659,9 +689,7 @@ class Game {
 
     shoot_btn.addEventListener('touchstart', e => {
       e.preventDefault();
-
       this.player.shoot();
-
       this.fired = true;
     });
 
@@ -700,8 +728,6 @@ class Game {
         // console.log(e.key);
       }
       if (e.key === 'r' && this.gameOver) this.restart();
-
-
     });
 
 
@@ -773,7 +799,19 @@ class Game {
       }
     });
   } // end render
+  //-----------create boss bombs ----------------------
+  createBossBombs(){
+    for (let i = 0; i < this.bossBombsnumber; i++){
+      this.bossBombsPool.push(new BossBombs(this));
+    }
+  }
 
+  getBossBombs(){
+    for (let i = 0; i < this.bossBombsPool.length; i++) {
+      if (this.bossBombsPool[i].free) return this.bossBombsPool[i];
+    }
+  }
+  //---------------------------------------------------
   // create object pool projectiles-------------------
   createProjectiles() {
     for (let i = 0; i < this.numberOfPrjectiles; i++) {

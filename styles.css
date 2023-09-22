@@ -30,6 +30,12 @@ body{
   display: none;
 }
 
+@media (min-height: 800px){
+  #canvas1{
+    height: 95%;
+
+  }
+}
 @media (max-width: 600px){
   #canvas1 {
     width: 80%;
