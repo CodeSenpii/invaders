@@ -21,13 +21,13 @@ class Asteroid{
   render(context){
     // if the asteroid is not available continue to draw it
     if (!this.free){
-      context.save();
-      context.beginPath();
-      // context.strokeRect(this.x, this.y, 70, 70);
-      context.strokeStyle = 'transparent';
-      context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      context.stroke();
-        context.restore();
+      // context.save();
+      // context.beginPath();
+      // // context.strokeRect(this.x, this.y, 70, 70);
+      // // context.strokeStyle = 'transparent';
+      // context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      // context.stroke();
+      //   context.restore();
 
 
       context.save();
@@ -169,9 +169,17 @@ class Player {
     this.smallLaserSound = new Audio();
     this.smallLaserSound.src = 'assets/smallLaserSound.mp3';
     this.smallLaserSound.volume = 0.5;
+    this.radius = 90;
+    this.shield = false;
   }
   draw(context) {
     // sprite frames and Laser triggers
+
+    if (this.game.keys.indexOf('s') > -1 && this.shield === false){
+      this.shield = true;
+    }else{
+      this.shield = false;
+    }
     if (this.game.keys.indexOf(' ') > -1) {
       this.frameX = 1;
 
@@ -218,6 +226,24 @@ class Player {
     // context.fillRect(this.x, this.y, this.width, this.height);
     context.drawImage(this.playerImage, this.frameX * this.width, 0, this.width, this.height,
       this.x, this.y, this.width, this.height);
+
+
+     //------------------Shield draw --------------------
+     if(this.shield === true){
+      context.save();
+      context.beginPath();
+      // context.strokeRect(this.x, this.y, 70, 70);
+
+      context.lineWidth = 5;
+      context.strokeStyle = 'white';
+      context.globalAlpha = 0.5;
+
+      context.arc(this.x + this.width*0.5, this.y + this.height*0.5, this.radius, 0, Math.PI * 2);
+      context.stroke();
+      context.fill();
+      context.restore();
+      //------------------------------------------------
+    }
   }
   update() {
     //energy
@@ -636,7 +662,7 @@ class Game {
     //-------------------------------------
 
     //----------Asteroid Pool ------------
-    this.bottomMargin = 210;
+    this.bottomMargin = 80;
     this.astroidPool = [];
     this.maxAstroid = 4;
     this.asteroidTimer = 0;
@@ -665,6 +691,8 @@ class Game {
 
 
     });
+
+
 
     mega_beam.addEventListener('touchend', e => {
       // lets make sure that the btn_press array only has 0ne btn entry per btn push
@@ -768,7 +796,7 @@ class Game {
       this.spriteTimer += deltaTime;
     }
     this.drawStatusText(context);
-    this.player.draw(context);
+
 
 
     this.astroidPool.forEach(astroid =>{
@@ -778,8 +806,7 @@ class Game {
 
     // this.astroid.render(context, deltaTime);
 
-
-
+    this.player.draw(context);
     this.player.update();
     this.projectilesPool.forEach(projectile => {
       projectile.update();
