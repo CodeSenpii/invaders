@@ -182,7 +182,7 @@ class Player {
     }
     if (this.game.keys.indexOf(' ') > -1) {
       this.frameX = 1;
-    } else if (this.game.keys.indexOf('1') > -1 && this.shield === false) {
+    } else if (this.game.keys.indexOf('a') > -1 && this.shield === false) {
       if (!this.coolDown) {
         this.smallLaserSound.currentTime = 0;
         this.frameX = 2;
@@ -193,7 +193,7 @@ class Player {
         this.ammoClick.play();
       }
 
-    } else if (this.game.keys.indexOf('2') > -1 && this.shield === false) {
+    } else if (this.game.keys.indexOf('d') > -1 && this.shield === false) {
       if (!this.coolDown) {
         this.frameX = 3;
         this.bigLaser.render(context);
