@@ -178,12 +178,11 @@ class Player {
     if (this.game.keys.indexOf('s') > -1 && this.shield === false){
       this.shield = true;
     }else{
-      this.shield = false;
+      // this.shield = false;
     }
     if (this.game.keys.indexOf(' ') > -1) {
       this.frameX = 1;
-
-    } else if (this.game.keys.indexOf('1') > -1) {
+    } else if (this.game.keys.indexOf('1') > -1 && this.shield === false) {
       if (!this.coolDown) {
         this.smallLaserSound.currentTime = 0;
         this.frameX = 2;
@@ -194,7 +193,7 @@ class Player {
         this.ammoClick.play();
       }
 
-    } else if (this.game.keys.indexOf('2') > -1) {
+    } else if (this.game.keys.indexOf('2') > -1 && this.shield === false) {
       if (!this.coolDown) {
         this.frameX = 3;
         this.bigLaser.render(context);
@@ -203,7 +202,7 @@ class Player {
         this.framX = 1;
         this.ammoClick.play();
       }
-    } else if (this.game.btn_press.indexOf('laser') > -1) {
+    } else if (this.game.btn_press.indexOf('laser') > -1 && this.shield === false) {
       if (!this.coolDown) {
         this.smallLaserSound.currentTime = 0;
         this.frameX = 2;
@@ -215,7 +214,7 @@ class Player {
       }
 
 
-    } else if (this.game.btn_press.indexOf('mega') > -1) {
+    } else if (this.game.btn_press.indexOf('mega') > -1 && this.shield === false) {
       // this.frameX = 3;
       this.bigLaser.render(context);
     } else {
@@ -289,7 +288,7 @@ class Player {
   }// end update -------------------------------
 
   shoot() {
-
+    if (this.shield === false){
     const projectile = this.game.getProjectile();
 
     if (projectile) {
@@ -297,6 +296,7 @@ class Player {
       projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
     }
   }
+}
 
   restart() {
     this.x = this.game.width * 0.5 - (this.width * 0.5);
@@ -682,7 +682,7 @@ class Game {
       if (this.btn_press.indexOf('mega') === -1) this.btn_press.push('mega');
       if (!this.player.coolDown) {
         this.megaSound.currentTime = 0;
-        this.megaSound.play();
+        if (!this.player.shield) this.megaSound.play();
         this.player.frameX = 3;
       } else {
         this.player.frameX = 1;
@@ -721,8 +721,10 @@ class Game {
 
     shoot_btn.addEventListener('touchstart', e => {
       e.preventDefault();
+
       this.player.shoot();
       this.fired = true;
+
     });
 
     left_btn.addEventListener('touchstart', e => {
@@ -766,6 +768,7 @@ class Game {
     window.addEventListener('keyup', e => { // use => to maintain scope
       const index = this.keys.indexOf(e.key);
       this.fired = false;
+      this.player.shield = false;
 
       if (index > -1) {
         this.keys.splice(index, 1);
