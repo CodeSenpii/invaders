@@ -430,6 +430,9 @@ class Boss {
     this.frameX = 0;
     this.frameY = Math.floor(Math.random() * 4);
     this.maxFrame = 11;
+    this.explode = new Audio();
+    this.explode.src = 'assets/bossExplode.mp3';
+    this.explode.volume = 0.5;
   }
   draw(context) {
     context.drawImage(this.bossImage, this.frameX * this.width, this.frameY * this.height, this.width,
@@ -477,6 +480,7 @@ class Boss {
       this.frameX++;
       if (this.frameX > this.maxFrame) {
         this.markedForDeletion = true;
+        this.explode.play();
         this.game.score += this.maxLives;
         this.game.bossLives += 5;
         if (!this.game.gameOver) this.game.newWave();
