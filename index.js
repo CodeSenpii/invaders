@@ -175,10 +175,8 @@ class Player {
   draw(context) {
     // sprite frames and Laser triggers
 
-    if (this.game.keys.indexOf('s') > -1 && this.shield === false){
+    if (this.game.keys.indexOf('s') > -1 && this.shield === false || this.game.btn_press.indexOf('shield') > -1 ){
       this.shield = true;
-    }else{
-      // this.shield = false;
     }
     if (this.game.keys.indexOf(' ') > -1) {
       this.frameX = 1;
@@ -675,7 +673,17 @@ class Game {
     this.bossLives = 10;
     this.restart(); // when boss appaers you restart
     //---------------------------------
-    // ----------------------button control fire, left, right-------------
+    // ----------------------button control fire, left, right, laser, shield-------------
+    shield.addEventListener('touchstart', e =>{
+      e.preventDefault();
+      if (this.btn_press.indexOf('shield') === -1) this.btn_press.push('shield');
+    });
+    shield.addEventListener('touchend', e =>{
+      const index = this.btn_press.indexOf('shield');
+      if (index > -1) this.btn_press.splice(index, 1);
+      this.player.frameX = 1;
+      this.player.shield = false;
+    });
 
     mega_beam.addEventListener('touchstart', e => {
       e.preventDefault();
@@ -689,10 +697,7 @@ class Game {
         this.player.ammoClick.play();
       }
 
-
     });
-
-
 
     mega_beam.addEventListener('touchend', e => {
       // lets make sure that the btn_press array only has 0ne btn entry per btn push
@@ -1009,6 +1014,7 @@ window.addEventListener('load', function() {
   const left_btn = document.getElementById('left_btn');
   const right_btn = document.getElementById('right_btn');
   const mega_beam = document.getElementById('mega');
+  const shield = document.getElementById('shield');
 
   // console.log(mega_beam.style);
 
@@ -1033,7 +1039,7 @@ window.addEventListener('load', function() {
   // ctx.lineWidth = 5;
   ctx.font = '30px Impact';
 
-  const game = new Game(canvas, shoot_btn, laser_btn, mega_beam);
+  const game = new Game(canvas, shoot_btn, laser_btn, mega_beam, shield);
 
 
 
