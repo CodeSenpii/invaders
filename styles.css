@@ -105,6 +105,33 @@ body{
   touch-action: none;
 }
 
+#shield{
+  position: absolute;
+  background: brown;
+  border: 2px solid black;
+  border-radius: 10%;
+  text-orientation: upright;
+  height: 80px;
+  width: 35px;
+  font-size: 0.7em;
+  bottom: 12%;
+  left: 2%;
+  margin: 0;
+  padding: 0;
+
+  font-weight: bold;
+  touch-action: none;
+}
+
+#shield span{
+  color: white;
+  /* background-color: purple; */
+  display: inline-block;
+  transform: rotate(-270deg);
+
+
+}
+
 #left_btn {
   bottom: 2%;
   right: 24%;
@@ -117,7 +144,7 @@ body{
 }
 
 @media (min-width: 600px){
-  #shoot, #left_btn, #right_btn, #laser, #mega, #asteroid{
+  #shoot, #left_btn, #right_btn, #laser, #mega, #shield{
     display: none;
   }
 
