@@ -437,6 +437,8 @@ class Enemy {
       }
     }
     // check collision enemies - Player
+
+
     if (this.game.checkCollision(this, this.game.player) && this.lives > 0) {
       this.lives = 0;
 
@@ -444,8 +446,8 @@ class Enemy {
       // if(!this.game.gameOver && this.game.score > 0) this.game.score--;
       this.game.player.lives--;
       // if(this.game.player.lives < 1) this.game.gameOver = true;
+      }
 
-    }
     // lose condition
     if (this.y + this.height > this.game.height || this.game.player.lives < 1) {
       this.game.gameOver = true;
@@ -636,8 +638,8 @@ class Explode {
     this.game = game;
     this.x = 0;
     this.y = 0;
-    this.width = 100;
-    this.height = 109;
+    this.width = 302;
+    this.height = 285;
     this.spriteWidth = this.width;
     this.spriteHeight = this.height;
     this.frameX = 0;
@@ -645,25 +647,28 @@ class Explode {
     this.image = document.getElementById('explode');
     this.explodeTimer = 0;
     this.explodeInterval = 18;
+    this.playerDestroyedSound = new Audio();
+    this.playerDestroyedSound.src = 'assets/explosion1.wav';
+    this.playerDestroyedSound.volume = 0.3;
 
   }
   draw(context) {
     context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY, this.spriteWidth, this.spriteHeight,
-      this.x, this.y, this.width, this.height);
+      this.x - this.spriteWidth*0.2, this.y - this.spriteHeight*0.3, this.width, this.height);
   }
   update(deltaTime) {
-
 
     this.explodeTimer += deltaTime;
     this.x = this.game.player.x;
     this.y = this.game.player.y;
 
-    if(this.explodeInterval < this.explodeTimer && this.frameX < 4){
+    if(this.explodeInterval < this.explodeTimer && this.frameX < 18){
       this.frameX++;
       this.explodeTimer = 0;
+      this.game.gameOver = true;
+      this.game.playerDestroyed = true;
+      if (this.frameX === 1) this.playerDestroyedSound.play();
     }
-
-
 
   }
 } //------------end explode -------------------
@@ -683,6 +688,7 @@ class Game {
     this.megaSound = new Audio();
     this.megaSound.src = 'assets/mega.mp3';
     this.playerDestroyed = false;
+
 
     // this.canonSound.src = 'assets/smallLaser.mp3';
 
@@ -1071,6 +1077,7 @@ class Game {
     this.waveCount = 1;
     this.score = 0;
     this.gameOver = false;
+    this.playerDestroyed = false;
   }
 
 
