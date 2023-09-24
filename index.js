@@ -993,6 +993,11 @@ class Game {
     context.globalAlpha = 0.5;
     context.textAlign = 'center';
     context.fillText('UNDER CONSTRUCTION', this.width * 0.5, this.height * 0.5);
+    context.font = '20px Impact';
+    context.fillText("'s' = Asteroid Shields", this.width * 0.5, this.height * 0.5 + 50);
+    context.fillText("'d' = Big Laser", this.width * 0.5, this.height * 0.5 + 100);
+    context.fillText("'space bar' = canon", this.width * 0.5, this.height * 0.5 + 150);
+
     context.restore();
     //----------------------------------------------------------
 
