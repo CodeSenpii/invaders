@@ -52,7 +52,8 @@ class Asteroid{
         // if(!this.game.gameOver) this.game.score++;
       }
     });
-  }
+
+  }// ------------End Asteroid Draw function -------------------------
 
   update(){
     this.angle += this.va;
@@ -175,6 +176,7 @@ class Player {
   draw(context) {
     // sprite frames and Laser triggers
 
+
     if (this.game.keys.indexOf('s') > -1 && this.shield === false || this.game.btn_press.indexOf('shield') > -1 ){
       this.shield = true;
     }
@@ -243,6 +245,23 @@ class Player {
     }
   }
   update() {
+    //---------------player and asteroid collision
+    if (!this.shield){
+      this.game.astroidPool.forEach(asteroid => {
+        if (!asteroid.free && this.game.checkCollisonAstroid(asteroid, this)) {
+          // this.markedForDeletion = true;
+          // this.hitSound.currentTime = 0;
+          // this.hitSound.play();
+          // projectile.reset();
+          // if(!this.game.gameOver) this.game.score++;
+          this.game.playerDestroyed = true;
+
+        }
+      });
+    }
+
+
+    //------------------------------------------
     //energy
     if (this.energy < this.maxEnergy) {
       this.energy += 0.05;
@@ -625,6 +644,7 @@ class Game {
     this.mega = mega_beam;
     this.megaSound = new Audio();
     this.megaSound.src = 'assets/mega.mp3';
+    this.playerDestroyed = false;
 
     // this.canonSound.src = 'assets/smallLaser.mp3';
 
@@ -812,9 +832,8 @@ class Game {
       astroid.update();
     });
 
-    // this.astroid.render(context, deltaTime);
 
-    this.player.draw(context);
+    if (!this.playerDestroyed) this.player.draw(context);
     this.player.update();
     this.projectilesPool.forEach(projectile => {
       projectile.update();
