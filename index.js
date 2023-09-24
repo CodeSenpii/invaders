@@ -1,6 +1,6 @@
 //jshint esversion:8
-class Asteroid{
-  constructor(game){
+class Asteroid {
+  constructor(game) {
     this.game = game;
     this.radius = 73;
     this.x = -(Math.random() * 3 + 1) * this.radius;
@@ -11,16 +11,16 @@ class Asteroid{
     this.spriteHeight = 155;
 
     this.speed = (Math.random() * 3 + 1) * 0.3;
-    this.free = true;// is the astroid in the pool free or not
-    this.angle = 0;// rotation angle
+    this.free = true; // is the astroid in the pool free or not
+    this.angle = 0; // rotation angle
     this.va = Math.random() * 0.02 - 0.01;
     this.hitSound = new Audio();
     this.hitSound.src = 'assets/hit.mp3';
     this.hitSound.volume = 0.1;
   }
-  render(context){
+  render(context) {
     // if the asteroid is not available continue to draw it
-    if (!this.free){
+    if (!this.free) {
       // context.save();
       // context.beginPath();
       // // context.strokeRect(this.x, this.y, 70, 70);
@@ -36,7 +36,7 @@ class Asteroid{
       // because of the translate method this.x and this.y is set
       // in drawImage this.x and this.y is now from 0
       context.drawImage(this.image, 0 - this.spriteWidth * 0.5, 0 - this.spriteHeight * 0.5,
-      this.spriteWidth, this.spriteHeight);
+        this.spriteWidth, this.spriteHeight);
 
       //context.drawImage(this.image, this.x - this.spriteWidth * 0.5, this.y - this.spriteHeight * 0.5,
       // this.spriteWidth, this.spriteHeight);
@@ -53,23 +53,23 @@ class Asteroid{
       }
     });
 
-  }// ------------End Asteroid Draw function -------------------------
+  } // ------------End Asteroid Draw function -------------------------
 
-  update(){
+  update() {
     this.angle += this.va;
-    if (!this.free){
+    if (!this.free) {
       this.x += this.speed;
       // if the asteroid has gone pass the area then return to pool and mark as available
-      if(this.x > this.game.width + this.radius){
+      if (this.x > this.game.width + this.radius) {
         this.reset();
       }
     }
   }
-  reset(){
+  reset() {
     this.free = true;
   }
   // set the original values
-  start(){
+  start() {
     this.free = false;
     this.x = -(Math.random() * 3 + 1) * this.radius;
     this.y = Math.random() * (this.game.height - this.game.bottomMargin);
@@ -177,7 +177,7 @@ class Player {
     // sprite frames and Laser triggers
 
 
-    if (this.game.keys.indexOf('s') > -1 && this.shield === false || this.game.btn_press.indexOf('shield') > -1 ){
+    if (this.game.keys.indexOf('s') > -1 && this.shield === false || this.game.btn_press.indexOf('shield') > -1) {
       this.shield = true;
     }
     if (this.game.keys.indexOf(' ') > -1) {
@@ -188,7 +188,7 @@ class Player {
         this.frameX = 2;
         this.SmallLaser.render(context);
         this.smallLaserSound.play();
-      }else{
+      } else {
         this.framX = 1;
         this.ammoClick.play();
       }
@@ -208,7 +208,7 @@ class Player {
         this.frameX = 2;
         this.SmallLaser.render(context);
         this.smallLaserSound.play();
-      }else{
+      } else {
         this.framX = 1;
         this.ammoClick.play();
       }
@@ -227,8 +227,8 @@ class Player {
       this.x, this.y, this.width, this.height);
 
 
-     //------------------Shield draw --------------------
-     if(this.shield === true){
+    //------------------Shield draw --------------------
+    if (this.shield === true) {
       context.save();
       context.beginPath();
       // context.strokeRect(this.x, this.y, 70, 70);
@@ -237,7 +237,7 @@ class Player {
       context.strokeStyle = 'white';
       context.globalAlpha = 0.5;
 
-      context.arc(this.x + this.width*0.5, this.y + this.height*0.5, this.radius, 0, Math.PI * 2);
+      context.arc(this.x + this.width * 0.5, this.y + this.height * 0.5, this.radius, 0, Math.PI * 2);
       context.stroke();
       context.fill();
       context.restore();
@@ -246,7 +246,7 @@ class Player {
   }
   update() {
     //---------------player and asteroid collision
-    if (!this.shield){
+    if (!this.shield) {
       this.game.astroidPool.forEach(asteroid => {
         if (!asteroid.free && this.game.checkCollisonAstroid(asteroid, this)) {
           // this.markedForDeletion = true;
@@ -302,18 +302,18 @@ class Player {
     //   this.game.keys.splice(index);
     // }
 
-  }// end update -------------------------------
+  } // end update -------------------------------
 
   shoot() {
-    if (this.shield === false){
-    const projectile = this.game.getProjectile();
+    if (this.shield === false) {
+      const projectile = this.game.getProjectile();
 
-    if (projectile) {
-      this.play();
-      projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
+      if (projectile) {
+        this.play();
+        projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
+      }
     }
   }
-}
 
   restart() {
     this.x = this.game.width * 0.5 - (this.width * 0.5);
@@ -328,8 +328,8 @@ class Player {
   }
 } // End Player Class
 
-class BossBombs{
-  constructor(game){
+class BossBombs {
+  constructor(game) {
     this.game = game;
     this.width = 4;
     this.height = 20;
@@ -362,7 +362,7 @@ class BossBombs{
   reset() {
     this.free = true;
   }
-}//---end boss bombs class
+} //---end boss bombs class
 
 class Projectile { // using object polling
   constructor(game) {
@@ -532,7 +532,7 @@ class Boss {
     //lose condition
     if (this.y + this.height > this.game.height) this.game.gameOver = true;
 
-  }//------------- end update --------------------
+  } //------------- end update --------------------
   // -----------------
   BossBombDrop() {
 
@@ -629,13 +629,51 @@ class Rhinomorph extends Enemy {
     this.lives -= damage;
     this.frameX = this.maxLives - Math.floor(this.lives);
   }
-}
+} // end Rhinomorph class ---------------
+
+class Explode {
+  constructor(game) {
+    this.game = game;
+    this.x = 0;
+    this.y = 0;
+    this.width = 100;
+    this.height = 109;
+    this.spriteWidth = this.width;
+    this.spriteHeight = this.height;
+    this.frameX = 0;
+    this.frameY = 0;
+    this.image = document.getElementById('explode');
+    this.explodeTimer = 0;
+    this.explodeInterval = 18;
+
+  }
+  draw(context) {
+    context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY, this.spriteWidth, this.spriteHeight,
+      this.x, this.y, this.width, this.height);
+  }
+  update(deltaTime) {
+
+
+    this.explodeTimer += deltaTime;
+    this.x = this.game.player.x;
+    this.y = this.game.player.y;
+
+    if(this.explodeInterval < this.explodeTimer && this.frameX < 4){
+      this.frameX++;
+      this.explodeTimer = 0;
+    }
+
+
+
+  }
+} //------------end explode -------------------
 class Game {
   constructor(canvas, shoot_btn, laser_btn, mega_beam) {
     this.canvas = canvas;
     this.width = this.canvas.width;
     this.height = this.canvas.height;
     this.player = new Player(this);
+    this.explode = new Explode(this);
     // this.astroid = new Asteroid(this);
     this.btn_press = [];
     this.keys = [];
@@ -694,11 +732,11 @@ class Game {
     this.restart(); // when boss appaers you restart
     //---------------------------------
     // ----------------------button control fire, left, right, laser, shield-------------
-    shield.addEventListener('touchstart', e =>{
+    shield.addEventListener('touchstart', e => {
       e.preventDefault();
       if (this.btn_press.indexOf('shield') === -1) this.btn_press.push('shield');
     });
-    shield.addEventListener('touchend', e =>{
+    shield.addEventListener('touchend', e => {
       const index = this.btn_press.indexOf('shield');
       if (index > -1) this.btn_press.splice(index, 1);
       this.player.frameX = 1;
@@ -806,12 +844,12 @@ class Game {
 
   render(context, deltaTime) {
     // create asteroid periodically
-    if(this.asteroidTimer > this.asteroidInterval){
+    if (this.asteroidTimer > this.asteroidInterval) {
       const asteroid = this.getAsteroid();
 
       if (asteroid) asteroid.start();
       this.asteroidTimer = 0;
-    }else{
+    } else {
       this.asteroidTimer += deltaTime;
     }
 
@@ -827,14 +865,20 @@ class Game {
 
 
 
-    this.astroidPool.forEach(astroid =>{
+    this.astroidPool.forEach(astroid => {
       astroid.render(context);
       astroid.update();
     });
 
 
-    if (!this.playerDestroyed) this.player.draw(context);
-    this.player.update();
+    if (!this.playerDestroyed) {
+
+      this.player.draw(context);
+      this.player.update();
+    }else{
+      this.explode.update(deltaTime);
+      this.explode.draw(context);
+    }
     this.projectilesPool.forEach(projectile => {
       projectile.update();
       projectile.draw(context);
@@ -858,13 +902,13 @@ class Game {
     });
   } // end render
   //-----------create boss bombs ----------------------
-  createBossBombs(){
-    for (let i = 0; i < this.bossBombsnumber; i++){
+  createBossBombs() {
+    for (let i = 0; i < this.bossBombsnumber; i++) {
       this.bossBombsPool.push(new BossBombs(this));
     }
   }
 
-  getBossBombs(){
+  getBossBombs() {
     for (let i = 0; i < this.bossBombsPool.length; i++) {
       if (this.bossBombsPool[i].free) return this.bossBombsPool[i];
     }
@@ -883,15 +927,15 @@ class Game {
   }
   //-------------Projectile Pool end-------------------------------
   //-------------------Astriod pool create----------------
-  createAsteroidPool(){
-    for (let i = 0; i < this.maxAstroid; i++){
+  createAsteroidPool() {
+    for (let i = 0; i < this.maxAstroid; i++) {
       this.astroidPool.push(new Asteroid(this));
     }
   }
 
-  getAsteroid(){
-    for (let i = 0; i < this.astroidPool.length; i++){
-      if (this.astroidPool[i].free){
+  getAsteroid() {
+    for (let i = 0; i < this.astroidPool.length; i++) {
+      if (this.astroidPool[i].free) {
         return this.astroidPool[i];
       }
     }
@@ -906,20 +950,28 @@ class Game {
       a.y + a.height > b.y);
   }
 
-  checkCollisonAstroid(asteroid, rect){
-    var distX = Math.abs(asteroid.x - rect.x - rect.width/2);
-     var distY = Math.abs(asteroid.y - rect.y - rect.height/2);
+  checkCollisonAstroid(asteroid, rect) {
+    var distX = Math.abs(asteroid.x - rect.x - rect.width / 2);
+    var distY = Math.abs(asteroid.y - rect.y - rect.height / 2);
 
-     if (distX > (rect.width/2 + asteroid.radius)) { return false; }
-     if (distY > (rect.height/2 + asteroid.radius)) { return false; }
+    if (distX > (rect.width / 2 + asteroid.radius)) {
+      return false;
+    }
+    if (distY > (rect.height / 2 + asteroid.radius)) {
+      return false;
+    }
 
-     if (distX <= (rect.width/2)) { return true; }
-     if (distY <= (rect.height/2)) { return true; }
+    if (distX <= (rect.width / 2)) {
+      return true;
+    }
+    if (distY <= (rect.height / 2)) {
+      return true;
+    }
 
-     // also test for corner collisions
-     var dx=distX-rect.width/2;
-     var dy=distY-rect.height/2;
-     return (dx*dx+dy*dy<=(asteroid.radius*asteroid.radius));
+    // also test for corner collisions
+    var dx = distX - rect.width / 2;
+    var dy = distY - rect.height / 2;
+    return (dx * dx + dy * dy <= (asteroid.radius * asteroid.radius));
 
   }
   //--------------------------------------------------
@@ -985,8 +1037,8 @@ class Game {
   newWave() {
     this.waveCount++;
 
-       if (this.player.lives < this.player.maxLives) {
-      if (this.waveCount% 6 === 0){
+    if (this.player.lives < this.player.maxLives) {
+      if (this.waveCount % 6 === 0) {
         this.player.lives++;
       }
 
