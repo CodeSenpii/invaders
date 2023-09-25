@@ -222,7 +222,7 @@ class Player {
     }
     context.drawImage(this.jets_image, this.jetsFrame * this.width, 0, this.width, this.height,
       this.x, this.y, this.width, this.height);
-    // context.fillRect(this.x, this.y, this.width, this.height);
+    // context.StrokeRect(this.x, this.y, this.width, this.height);
     context.drawImage(this.playerImage, this.frameX * this.width, 0, this.width, this.height,
       this.x, this.y, this.width, this.height);
 
@@ -671,6 +671,7 @@ class Explode {
       this.game.playerDestroyed = true;
       if (this.frameX === 1) this.playerDestroyedSound.play();
       this.game.projectilesPool = [];
+      this.game.playerGone = true;
     }
 
   }
@@ -691,6 +692,7 @@ class Game {
     this.megaSound = new Audio();
     this.megaSound.src = 'assets/mega.mp3';
     this.playerDestroyed = false;
+    this.playerGone = false;
 
 
     // this.canonSound.src = 'assets/smallLaser.mp3';
@@ -953,10 +955,12 @@ class Game {
 
   //----------------Collision-------------------------
   checkCollision(a, b) {
+    if (!this.playerGone){
     return (a.x < b.x + b.width &&
       a.x + a.width > b.x &&
       a.y < b.y + b.height &&
       a.y + a.height > b.y);
+    }
   }
 
   checkCollisonAstroid(asteroid, rect) {
@@ -1076,6 +1080,7 @@ class Game {
     this.player.restart();
     this.columns = 2;
     this.rows = 2;
+    this.playerGone = false;
 
     this.waves = [];
     this.bossArray = [];
