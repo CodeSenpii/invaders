@@ -319,6 +319,8 @@ class Player {
     this.x = this.game.width * 0.5 - (this.width * 0.5);
     this.y = this.game.height - this.height;
     this.lives = 3;
+    this.shield = false;
+
   }
 
   play() {
@@ -668,6 +670,7 @@ class Explode {
       this.game.gameOver = true;
       this.game.playerDestroyed = true;
       if (this.frameX === 1) this.playerDestroyedSound.play();
+      this.game.projectilesPool = [];
     }
 
   }
@@ -1079,10 +1082,12 @@ class Game {
     this.bossLives = 10;
     this.waves.push(new Wave(this, this.bossLives));
     // this.bossArray.push(new Boss(this));
+    this.createProjectiles();
     this.waveCount = 1;
     this.score = 0;
     this.gameOver = false;
     this.playerDestroyed = false;
+    this.explode.frameX = 0;
   }
 
 
@@ -1107,9 +1112,6 @@ window.addEventListener('load', function() {
 
   //small_laser.loop = true;
   //crowSounds.play();
-
-
-
 
 
 
