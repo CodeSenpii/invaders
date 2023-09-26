@@ -1,4 +1,64 @@
 //jshint esversion:8
+//------------Small Asteroid------------------------------
+class SmallAsteroid {
+  constructor(game){
+    this.game = game;
+    this.x =  (Math.random() * 3 + 1) * this.radius + 200;
+    this.y = Math.random() * (this.game.height - this.game.bottomMargin * 4);
+    this.image = document.getElementById('smallAsteroid');
+    this.image.src = 'assets/asteroidSmallest.png';
+    this.speed = (Math.random() * 3 + 1) * 0.1;
+    this.width = 38;
+    this.height = 39;
+    this.va = Math.random() * 0.01 - 0.01;
+    this.angle = 0; // rotation angle
+    this.spriteWidth = this.width;
+    this.spriteHeight = this.height;
+    this.speed = (Math.random() * 3 + 1) * 0.3;
+    this.free = true;
+    this.radius = 20;
+  }
+  draw(context){
+
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate(this.angle);
+    context.beginPath();
+
+
+    context.strokeStyle = 'transparent';
+    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    // context.drawImage(this.image, 0, 0, this.spriteWidth, this.spriteHeight,
+    // this.x - this.spriteWidth*0.5, this.y - this.spriteHeight*0.5, this.width, this.height);
+    context.drawImage(this.image, 0 - this.spriteWidth * 0.5, 0 - this.spriteHeight * 0.5,
+      this.spriteWidth, this.spriteHeight);
+    context.stroke();
+    context.restore();
+  }
+  update() {
+    this.angle += this.va;
+    if (!this.free) {
+      this.x -= this.speed;
+      // if the asteroid has gone pass the area then return to pool and mark as available
+      if (this.x < -this.radius * 3) {
+        this.reset();
+      }
+    }
+  }
+  reset() {
+    this.free = true;
+  }
+  // set the original values
+  start() {
+    this.free = false;
+
+    // this.x = - (Math.random() * 3 + 1) * this.radius * 2;
+    this.x = Math.random() * this.radius + this.game.width;
+    this.y = Math.random() * this.game.height - this.game.bottomMargin * 4;
+  }
+}
+//---------------------------------------------------------
+//-------------End small asteroid class--------------------
 class Asteroid {
   constructor(game) {
     this.game = game;
@@ -75,7 +135,7 @@ class Asteroid {
     this.y = Math.random() * (this.game.height - this.game.bottomMargin);
   }
 
-}
+}//------------End asteroid class ------------------------------
 class Laser {
   constructor(game) {
     this.game = game;
@@ -480,6 +540,8 @@ class Boss {
     this.explode = new Audio();
     this.explode.src = 'assets/bossExplode.mp3';
     this.explode.volume = 0.5;
+    this.bombTimer = 0;
+    this.bombInterval = 3000;
   }
   draw(context) {
     context.drawImage(this.bossImage, this.frameX * this.width, this.frameY * this.height, this.width,
@@ -494,9 +556,11 @@ class Boss {
       context.fillText(Math.floor(this.lives), this.x + this.width * 0.5, this.y + 50);
       context.restore();
     }
+
+
   }
 
-  update() {
+  update(deltaTime) {
     this.speedY = 0;
     if (this.game.spriteUpdate && this.lives >= 1) this.frameX = 0;
     if (this.y < 0) this.y += 3;
@@ -517,7 +581,8 @@ class Boss {
       }
     });
 
-    // collision detection boss/player
+
+    // ---------------collision detection boss/player-------------
     if (this.game.checkCollision(this, this.game.player) && this.lives >= 1) {
       this.game.gameOver = true;
       this.lives = 0;
@@ -537,14 +602,7 @@ class Boss {
     if (this.y + this.height > this.game.height) this.game.gameOver = true;
 
   } //------------- end update --------------------
-  // -----------------
-  BossBombDrop() {
 
-    const projectile = this.game.getBossBombs();
-    if (projectile) {
-      projectile.start(this.x + this.width * 0.5, this.y); // check that the pool use not exceeded number of porjectiles
-    }
-  }
 
   hit(damage) {
     this.lives -= damage;
@@ -727,6 +785,14 @@ class Game {
     // this.waves.push(new Wave(this));
     this.waveCount = 1;
     //-------------------------------------
+    //--------------Small Asteroid----------
+    this.smallAsteroidPool = [];
+    this.smallAsteroidTimer = 0;
+    this.maxSmallAsteroid = 6;
+    this.createSmallAsteroidPool();
+
+    // this.smallAsteroid = new SmallAsteroid(this);
+    //--------------------------------------
 
     //----------Asteroid Pool ------------
     this.bottomMargin = 80;
@@ -736,6 +802,8 @@ class Game {
     this.asteroidInterval = 1000;
     this.createAsteroidPool();
     //-------------------------------------
+
+
 
     //----------Boss---------------------
     this.bossArray = [];
@@ -854,6 +922,20 @@ class Game {
   } // End game Constructor
 
   render(context, deltaTime) {
+    //-----small asteroid -----------------
+    if(this.smallAsteroidTimer > this.asteroidInterval*2){
+      const smallAsteroid = this.getSmallAsteroid();
+
+      if(smallAsteroid) smallAsteroid.start();
+      this.smallAsteroidTimer = 0;
+    }else{
+      this.smallAsteroidTimer += deltaTime;
+    }
+
+    //-----------------------------------
+
+
+
     // create asteroid periodically
     if (this.asteroidTimer > this.asteroidInterval) {
       const asteroid = this.getAsteroid();
@@ -874,7 +956,10 @@ class Game {
     }
     this.drawStatusText(context);
 
-
+    this.smallAsteroidPool.forEach(smallAsteroid => {
+      smallAsteroid.draw(context);
+      smallAsteroid.update();
+    });
 
     this.astroidPool.forEach(astroid => {
       astroid.render(context);
@@ -897,8 +982,10 @@ class Game {
 
     this.bossArray.forEach(boss => {
       boss.draw(context);
-      boss.update();
+      boss.update(deltaTime);
     });
+
+
 
     this.bossArray = this.bossArray.filter(object => !object.markedForDeletion); // delete boss
     this.waves.forEach(wave => {
@@ -911,7 +998,20 @@ class Game {
         // if (this.player.lives < this.player.maxLives && this.waveCount % 3 === 0) this.player.lives++;
       }
     });
-  } // end render
+  } // end render ----------------------
+  //-------------create small asteroid -----------------
+  createSmallAsteroidPool(){
+    for (let i = 0; i < this.maxSmallAsteroid; i++){
+      this.smallAsteroidPool.push(new SmallAsteroid(this));
+    }
+  }
+
+  getSmallAsteroid(){
+    for (let i = 0; i < this.smallAsteroidPool.length; i++) {
+      if (this.smallAsteroidPool[i].free) return this.smallAsteroidPool[i];
+    }
+  }
+  //---------------------------------------------------------
   //-----------create boss bombs ----------------------
   createBossBombs() {
     for (let i = 0; i < this.bossBombsnumber; i++) {
@@ -937,6 +1037,8 @@ class Game {
     }
   }
   //-------------Projectile Pool end-------------------------------
+
+
   //-------------------Astriod pool create----------------
   createAsteroidPool() {
     for (let i = 0; i < this.maxAstroid; i++) {
