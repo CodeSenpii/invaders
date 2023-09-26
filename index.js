@@ -3,14 +3,14 @@
 class SmallAsteroid {
   constructor(game){
     this.game = game;
-    this.x =  (Math.random() * 3 + 1) * this.radius + 200;
+    this.x =  Math.random() * this.radius + this.game.width;
     this.y = Math.random() * (this.game.height - this.game.bottomMargin * 4);
     this.image = document.getElementById('smallAsteroid');
     this.image.src = 'assets/asteroidSmallest.png';
-    this.speed = (Math.random() * 3 + 1) * 0.1;
+    this.speed = (Math.random() * 3 + 1) * 0.01;
     this.width = 38;
     this.height = 39;
-    this.va = Math.random() * 0.01 - 0.01;
+    this.va = Math.random() * 0.02 - 0.01;
     this.angle = 0; // rotation angle
     this.spriteWidth = this.width;
     this.spriteHeight = this.height;
@@ -790,8 +790,6 @@ class Game {
     this.smallAsteroidTimer = 0;
     this.maxSmallAsteroid = 6;
     this.createSmallAsteroidPool();
-
-    // this.smallAsteroid = new SmallAsteroid(this);
     //--------------------------------------
 
     //----------Asteroid Pool ------------
@@ -923,7 +921,7 @@ class Game {
 
   render(context, deltaTime) {
     //-----small asteroid -----------------
-    if(this.smallAsteroidTimer > this.asteroidInterval*2){
+    if(this.smallAsteroidTimer > this.asteroidInterval*1.5){
       const smallAsteroid = this.getSmallAsteroid();
 
       if(smallAsteroid) smallAsteroid.start();
