@@ -26,7 +26,7 @@ body{
   background-size: cover;
   /* overflow: hidden; */
 }
-#beetlemorph, #smallAsteroid, #asteroid, #player, #player_jets, #rhinomorph, #boss, #explode{
+#beetlemorph, #bossBomb, #smallAsteroid, #asteroid, #player, #player_jets, #rhinomorph, #boss, #explode{
   display: none;
 }
 

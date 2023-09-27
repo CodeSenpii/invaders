@@ -3,8 +3,8 @@
 class SmallAsteroid {
   constructor(game){
     this.game = game;
-    this.x =  Math.random() * this.radius + this.game.width;
-    this.y = Math.random() * (this.game.height - this.game.bottomMargin * 4);
+    this.x =  0;//Math.random() * this.radius + this.game.width;
+    this.y =  0;//Math.random() * (this.game.height - this.game.bottomMargin * 4);
     this.image = document.getElementById('smallAsteroid');
     this.image.src = 'assets/asteroidSmallest.png';
     this.speed = (Math.random() * 3 + 1) * 0.01;
@@ -315,6 +315,7 @@ class Player {
           // projectile.reset();
           // if(!this.game.gameOver) this.game.score++;
           this.game.playerDestroyed = true;
+          // this.player.lives = 0;
 
         }
       });
@@ -393,18 +394,24 @@ class Player {
 class BossBombs {
   constructor(game) {
     this.game = game;
-    this.width = 4;
-    this.height = 20;
-    this.x = 0;
-    this.y = 0;
-    this.speed = 10;
-    this.free = true;
+    this.width = 54;
+    this.height = 50;
+    this.spriteWidth = this.width;
+    this.spriteHeight = this.height;
+    this.image = document.getElementById('bossBomb');
+    this.image.src = 'assets/bossBomb.png';
+    this.x = this.game.width * 0.5;
+    this.y = - this.height;
+    this.speed = Math.random() * 5 + 5;
+    this.free = false;
   }
   draw(context) {
     if (!this.free) {
       context.save();
-      context.fillStyle = 'white';
+      context.fillStyle = 'transparent';
       context.fillRect(this.x, this.y, this.width, this.height);
+      context.drawImage(this.image, 0, 0, this.spriteWidth, this.spriteHeight,
+      this.x, this.y, this.width, this.height);
       context.restore();
     }
   } // End Projectile draw method
@@ -412,13 +419,14 @@ class BossBombs {
   update() {
     if (!this.free) {
       this.y += this.speed;
-      if (this.y > this.height) this.reset();
+
+      if (this.y > this.game.height) this.reset();
     }
   } //end boss bombs update method
   start(x, y) {
     // set to player position x,y
-    this.x = x - (this.width * 0.5);
-    this.y = y;
+    this.x = x + (this.width * 1.5 );
+    this.y = y + (this.game.bossHeight * 0.6);
     this.free = false;
   }
   reset() {
@@ -524,8 +532,8 @@ class Enemy {
 class Boss {
   constructor(game, bossLives) {
     this.game = game;
-    this.width = 200;
-    this.height = 200;
+    this.width = this.game.bossWidth;
+    this.height = this.game.bossHeight;
     this.x = this.game.width * 0.5 - this.width * 0.5;
     this.y = -this.height;
     this.speedX = Math.random() < 0.5 ? -1 : 1;
@@ -541,7 +549,7 @@ class Boss {
     this.explode.src = 'assets/bossExplode.mp3';
     this.explode.volume = 0.5;
     this.bombTimer = 0;
-    this.bombInterval = 3000;
+    this.bombInterval = Math.random() * 3000 + 2000;
   }
   draw(context) {
     context.drawImage(this.bossImage, this.frameX * this.width, this.frameY * this.height, this.width,
@@ -555,12 +563,28 @@ class Boss {
       context.shadowColor = 'black';
       context.fillText(Math.floor(this.lives), this.x + this.width * 0.5, this.y + 50);
       context.restore();
+
+      this.game.bossBombsPool.forEach(bombs =>{
+        bombs.draw(context);
+        bombs.update();
+      });
     }
 
 
   }
 
   update(deltaTime) {
+
+    if(this.bombTimer > this.bombInterval){
+      const bomb = this.game.getBossBombs();
+      bomb.start(this.x, this.y);
+      this.bombTimer = 0;
+    }else{
+      this.bombTimer += deltaTime;
+    }
+
+
+
     this.speedY = 0;
     if (this.game.spriteUpdate && this.lives >= 1) this.frameX = 0;
     if (this.y < 0) this.y += 3;
@@ -751,6 +775,8 @@ class Game {
     this.megaSound.src = 'assets/mega.mp3';
     this.playerDestroyed = false;
     this.playerGone = false;
+    this.bossWidth = 200;
+    this.bossHeight = 200;
 
 
     // this.canonSound.src = 'assets/smallLaser.mp3';
@@ -758,9 +784,9 @@ class Game {
 
 
     //----------BossBombs----------------
-    this.bossFired = false;
+
     this.bossBombsPool = [];
-    this.bossBombsnumber = 15;
+    this.bossBombsnumber = 5;
     this.createBossBombs();
     //------------------------------------
 
@@ -931,7 +957,6 @@ class Game {
     }
 
     //-----------------------------------
-
 
 
     // create asteroid periodically
