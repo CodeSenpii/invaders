@@ -870,7 +870,7 @@ class Game {
 
       if (this.btn_press.indexOf('shield')){
         this.player.radius = 0;
-        console.log(this.player.radius);
+
       }
     });
 
@@ -955,6 +955,7 @@ class Game {
     // event listeber - Key controls
     window.addEventListener('keydown', e => { // use => to maintain scope
 
+
       if (e.key === ' ' && !this.fired || e.key === 'ArrowUp' && !this.fired) this.player.shoot();
       this.fired = true;
       if (this.keys.indexOf(e.key) === -1) {
@@ -962,6 +963,7 @@ class Game {
         // console.log(e.key);
       }
       if (e.key === 'r' && this.gameOver) this.restart();
+      if(e.key === 's' && !this.player.shield ) this.player.radius = 0;
     });
 
 
