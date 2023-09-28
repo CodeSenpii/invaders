@@ -577,10 +577,12 @@ class Boss {
 
     if(this.bombTimer > this.bombInterval){
       const bomb = this.game.getBossBombs();
+
       bomb.start(this.x, this.y);
       this.bombTimer = 0;
     }else{
       this.bombTimer += deltaTime;
+
     }
 
 
@@ -603,6 +605,14 @@ class Boss {
         this.hit(1);
         projectile.reset();
       }
+    });
+
+    //-----------------Boss Bomb collision----------------------
+    this.game.bossBombsPool.forEach(bomb => {
+       if (this.game.checkCollision(this.game.player, bomb) && !bomb.free){
+         this.game.playerDestroyed = true;
+         this.game.gameOver = true;
+       }
     });
 
 
