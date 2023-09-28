@@ -855,14 +855,30 @@ class Game {
     // ----------------------button control fire, left, right, laser, shield-------------
     shield.addEventListener('touchstart', e => {
       e.preventDefault();
+      this.player.radius = 0;
       if (this.btn_press.indexOf('shield') === -1) this.btn_press.push('shield');
     });
     shield.addEventListener('touchend', e => {
       const index = this.btn_press.indexOf('shield');
+
+
+
+
       if (index > -1) this.btn_press.splice(index, 1);
       this.player.frameX = 1;
       this.player.shield = false;
+
+      if (this.btn_press.indexOf('shield')){
+        this.player.radius = 0;
+        console.log(this.player.radius);
+      }
     });
+
+
+
+
+
+
 
     mega_beam.addEventListener('touchstart', e => {
       e.preventDefault();
