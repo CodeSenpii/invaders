@@ -230,7 +230,8 @@ class Player {
     this.smallLaserSound = new Audio();
     this.smallLaserSound.src = 'assets/smallLaserSound.mp3';
     this.smallLaserSound.volume = 0.5;
-    this.radius = 90;
+    this.maxRadius = 90;
+    this.radius = 0;
     this.shield = false;
   }
   draw(context) {
@@ -294,6 +295,7 @@ class Player {
       // context.strokeRect(this.x, this.y, 70, 70);
 
       context.lineWidth = 5;
+      context.filter = "blur(2px)";
       context.strokeStyle = 'white';
       context.globalAlpha = 0.5;
 
@@ -306,6 +308,10 @@ class Player {
   }
   update() {
     //---------------player and asteroid collision
+    if (this.radius < this.maxRadius){
+      this.radius += 1.5;
+    }
+
     if (!this.shield) {
       this.game.astroidPool.forEach(asteroid => {
         if (!asteroid.free && this.game.checkCollisonAstroid(asteroid, this)) {
@@ -565,8 +571,10 @@ class Boss {
       context.restore();
 
       this.game.bossBombsPool.forEach(bombs =>{
+
         bombs.draw(context);
         bombs.update();
+
       });
     }
 
@@ -578,7 +586,7 @@ class Boss {
     if(this.bombTimer > this.bombInterval){
       const bomb = this.game.getBossBombs();
 
-      bomb.start(this.x, this.y);
+      bomb.start(this.x, this.y);// this starts the bomb drop
       this.bombTimer = 0;
     }else{
       this.bombTimer += deltaTime;
@@ -946,6 +954,11 @@ class Game {
       this.fired = false;
       this.player.shield = false;
 
+      if (this.keys.indexOf('s')) {
+      this.player.radius = 0;
+
+      }
+
       if (index > -1) {
         this.keys.splice(index, 1);
       }
@@ -1216,6 +1229,7 @@ class Game {
     this.columns = 2;
     this.rows = 2;
     this.playerGone = false;
+    this.player.radius = 0;
 
     this.waves = [];
     this.bossArray = [];
