@@ -148,8 +148,10 @@ class Laser {
     this.x = this.game.player.x + this.game.player.width * 0.5 - this.width * 0.5; // horizotal coord of player
     this.game.player.energy -= this.damage;
     context.save();
-    context.fillStyle = 'red';
+    context.filter = 'blur(1px)';
+    context.fillStyle = 'crimson';
     context.fillRect(this.x, this.y, this.width, this.height);
+    context.filter = 'blur(1px)';
     context.fillStyle = 'white';
     context.fillRect(this.x + this.width * 0.3, this.y, this.width * 0.4, this.height);
     context.restore();
@@ -1160,18 +1162,18 @@ class Game {
 
 
     //--------------UNER CONSTRUCTION-------------------------
-    context.save();
-    context.fillStyle = 'lightyellow';
-    context.font = '50px Impact';
-    context.globalAlpha = 0.5;
-    context.textAlign = 'center';
-    context.fillText('UNDER CONSTRUCTION', this.width * 0.5, this.height * 0.5);
-    context.font = '20px Impact';
-    context.fillText("'s' = Asteroid Shields", this.width * 0.5, this.height * 0.5 + 50);
-    context.fillText("'d' = Big Laser", this.width * 0.5, this.height * 0.5 + 100);
-    context.fillText("'space bar' = canon", this.width * 0.5, this.height * 0.5 + 150);
-
-    context.restore();
+    // context.save();
+    // context.fillStyle = 'lightyellow';
+    // context.font = '50px Impact';
+    // context.globalAlpha = 0.5;
+    // context.textAlign = 'center';
+    // context.fillText('UNDER CONSTRUCTION', this.width * 0.5, this.height * 0.5);
+    // context.font = '20px Impact';
+    // context.fillText("'s' = Asteroid Shields", this.width * 0.5, this.height * 0.5 + 50);
+    // context.fillText("'d' = Big Laser", this.width * 0.5, this.height * 0.5 + 100);
+    // context.fillText("'space bar' = canon", this.width * 0.5, this.height * 0.5 + 150);
+    //
+    // context.restore();
     //----------------------------------------------------------
 
     for (let i = 0; i < this.player.maxLives; i++) {
@@ -1275,6 +1277,12 @@ window.addEventListener('load', function() {
   const right_btn = document.getElementById('right_btn');
   const mega_beam = document.getElementById('mega');
   const shield = document.getElementById('shield');
+  const overlay = document.getElementById('overlay');
+
+
+  overlay.addEventListener('click', function(){
+    overlay.style.display ="none";
+  });
 
   // console.log(mega_beam.style);
 
@@ -1310,7 +1318,6 @@ window.addEventListener('load', function() {
     window.requestAnimationFrame(animate);
 
   }
-
 
   animate(0);
 });

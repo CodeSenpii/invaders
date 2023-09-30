@@ -11,7 +11,37 @@ body{
   overflow: hidden;
   /* background-color: black; */
   user-select: none;
+}
 
+#overlay{
+  height: 880px;
+  width: 670px;
+  user-select: none;
+  opacity: 0.7;
+  border: 5px solid black;
+  position: absolute;
+  top:50%;
+  left:50%;
+  translate : -50% -50%;
+  background-color: beige;
+  background-image: url('assets/keyboardControls.png');
+  /* background-repeat: no-repeat; */
+  background-size: cover;
+  z-index: 2;
+}
+
+#clear-overlay{
+  position: relative;
+  top: 2%;
+  left:70%;
+  background-color: black;
+  border-radius: 5%;
+  border: 2px solid gray;
+  font-size: 1em;
+  font-weight: bolder;
+  z-index: 4;
+  height: 30px;
+  color: white;
 }
 
 #canvas1{
@@ -37,9 +67,13 @@ body{
   }
 }
 @media (max-width: 600px){
-  #canvas1 {
+  #canvas1{
     width: 80%;
     height: 80%;
+  }
+
+  #overlay{
+    display: none;
   }
 }
 #shoot{
