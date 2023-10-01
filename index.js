@@ -1250,13 +1250,14 @@ class Game {
     this.rows = 2;
     this.playerGone = false;
     this.player.radius = 0;
-
+    this.bossBombsPool = [];
     this.waves = [];
     this.bossArray = [];
     this.bossLives = 10;
     this.waves.push(new Wave(this, this.bossLives));
     // this.bossArray.push(new Boss(this));
     this.createProjectiles();
+    this.createBossBombs();
     this.waveCount = 1;
     this.score = 0;
     this.gameOver = false;
@@ -1279,10 +1280,11 @@ window.addEventListener('load', function() {
   const shield = document.getElementById('shield');
   const overlay = document.getElementById('overlay');
 
-
   overlay.addEventListener('click', function(){
-    overlay.style.display ="none";
+    overlay.style.display = 'none';
   });
+
+
 
   // console.log(mega_beam.style);
 
