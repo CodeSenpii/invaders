@@ -194,12 +194,13 @@ class SmallLaser extends Laser {
 class BigLaser extends Laser {
   constructor(game) {
     super(game);
-    this.width = 18;
+    this.width = 24;
     this.damage = 0.7;
 
   }
   render(context) {
     if (this.game.player.energy > 1 && !this.game.player.coolDown) {
+
       super.render(context); // call the render method of the superclass
     }
 
@@ -225,6 +226,10 @@ class Player {
     this.energy = 50;
     this.maxEnergy = 75;
     this.coolDown = false;
+    this.sprightWidth = 270;
+    this.sprightHeight = 131;
+    this.rays_image = document.getElementById('rays');
+    this.rays_image.src = 'assets/rays.png';
     this.laserSound = new Audio();
     this.laserSound.src = 'assets/smallLaser.mp3';
     this.ammoClick = new Audio();
@@ -260,6 +265,8 @@ class Player {
       if (!this.coolDown) {
         this.frameX = 3;
         this.bigLaser.render(context);
+        context.drawImage(this.rays_image, 0, 0, this.sprightWidth, this.sprightHeight,
+        this.x - this.sprightWidth * 0.25, this.y - this.sprightHeight * 0.95, this.sprightWidth, this.sprightHeight);
         this.game.megaSound.play();
       } else {
         this.framX = 1;
@@ -288,6 +295,8 @@ class Player {
     // context.StrokeRect(this.x, this.y, this.width, this.height);
     context.drawImage(this.playerImage, this.frameX * this.width, 0, this.width, this.height,
       this.x, this.y, this.width, this.height);
+      // context.drawImage(this.rays_image, 0, 0, this.sprightWidth, this.sprightHeight,
+      // this.x, this.y, this.sprightWidth, this.sprightHeight);
 
 
     //------------------Shield draw --------------------
