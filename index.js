@@ -287,6 +287,8 @@ class Player {
     } else if (this.game.btn_press.indexOf('mega') > -1 && this.shield === false) {
       // this.frameX = 3;
       this.bigLaser.render(context);
+      context.drawImage(this.rays_image, 0, 0, this.sprightWidth, this.sprightHeight,
+      this.x - this.sprightWidth * 0.25, this.y - this.sprightHeight * 0.95, this.sprightWidth, this.sprightHeight);
     } else {
       this.frameX = 0;
     }
